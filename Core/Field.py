@@ -53,11 +53,14 @@ class Field:
         return value, []
 
 class String(Field):
-    def __init__(self, *, required=False, min_length=None, max_length=None, blank=False):
+    def __init__(self, *, required=False, min_length=None, max_length=None, regex=None):
         validators = []
         from Core.validators.MaxLength import MaxLength
         from Core.validators.MinLength import MinLength
+        from Core.validators.Regex import Regex
         
+        if regex is not None:
+            validators.append(Regex(regex))
         if min_length is not None:
             validators.append(MinLength(min_length))
         if max_length is not None:
@@ -94,7 +97,7 @@ class Int(Field):
         try:
             return int(value)
         except:
-            raise ValidationError("invalid_int")
+            raise ValidationError("type", "invalid_int")
 
 class Float(Field):
     def __init__(self, *, required=False, min=None, max=None, nullable=True):
@@ -117,19 +120,23 @@ class Float(Field):
             return None
         try:
             return float(value)
-        except:
-            raise ValidationError("invalid_float")
+        except ValidationError:
+            raise ValidationError("type", "invalid_float")
 
 class Email(String):
-    def __init__(self, *, required=False):
+    def __init__(self, *, required=False, regex=None):
         from Core.validators.Email import Email
+        from Core.validators.Regex import Regex
         validators = []
         
+        if regex is not None:
+            validators.append(Regex(regex))
         validators.append(Email())
         
         super().__init__(required=required)
 
 class list(Field):
+
     def __init__(self, *, required=False, list=None, inList=True):
         validators = []
         from Core.validators.InList import InList
@@ -137,5 +144,6 @@ class list(Field):
         
         if list is not None and inList is True:
             validators.append(InList(list, inList))
-
+        elif list is not None and inList is False:
+            validators.append(NotInList(list, inList))
         super().__init__(required=required)

@@ -1,4 +1,5 @@
-#Testfile
+#Tests
+/Tests
 .testfile.py
 
 # Byte-compiled / optimized / DLL files
