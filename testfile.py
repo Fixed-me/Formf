@@ -1,17 +1,17 @@
 # user_code.py
 from Core.Form import Form
-from Core.Field import Url, Bool
+from Core.Field import Date, Bool
 
 class RegisterForm(Form):
-    email = Url()
+    email = Date(format="DD-MM-YYYY")
     password = Bool(bool=True)
 
-good_data = {
-    "email": "https://stackoverflow.com/",
+data = {
+    "email": "19-08-2026",
     "password": True
 }
 
-form = RegisterForm(good_data)
+form = RegisterForm(data)
 
 print(form.is_valid())
 print(form.errors)

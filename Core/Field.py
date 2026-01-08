@@ -3,7 +3,7 @@
 from Core.errors import ValidationError
 
 class Field:
-    def __init__(self, *, required=False, default=None, blank=False, validators=None):
+    def __init__(self, *, required=True, default=None, blank=False, validators=None):
         self.required = required
         self.default = default
         self.validators = validators or []
@@ -62,7 +62,7 @@ class Field:
         return value, []
 
 class String(Field):
-    def __init__(self, *, required=False, min_length=None, max_length=None, regex=None):
+    def __init__(self, *, required=True, min_length=None, max_length=None, regex=None):
         validators = []
         from Core.validators.maxLength import MaxLength
         from Core.validators.minLength import MinLength
@@ -85,7 +85,7 @@ class String(Field):
         return value
 
 class Int(Field):
-    def __init__(self, *, required=False, min=None, max=None, nullable=True):
+    def __init__(self, *, required=True, min=None, max=None, nullable=True):
         from Core.validators.min import Min
         from Core.validators.max import Max
         from Core.validators.nullable import Nullable
@@ -110,7 +110,7 @@ class Int(Field):
 
 class Float(Field):
 
-    def __init__(self, *, required=False, min=None, max=None, nullable=True):
+    def __init__(self, *, required=True, min=None, max=None, nullable=True):
         from Core.validators.min import Min
         from Core.validators.max import Max
         from Core.validators.nullable import Nullable
@@ -135,7 +135,7 @@ class Float(Field):
 
 class Bool(Field):
 
-    def __init__(self, *, required=False, bool=True):
+    def __init__(self, *, required=True, bool=True):
         from Core.validators.bool import Bool
         validators = []
 
@@ -152,7 +152,7 @@ class Bool(Field):
         return value
     
 class Email(String):
-    def __init__(self, *, required=False, regex=None):
+    def __init__(self, *, required=True, regex=None):
         from Core.validators.email import Email
         from Core.validators.regex import Regex
         validators = []
@@ -165,7 +165,7 @@ class Email(String):
 
 class List(Field):
 
-    def __init__(self, *, required=False, list=None, inList=True):
+    def __init__(self, *, required=True, list=None, inList=True):
         from Core.validators.inList import InList
         from Core.validators.notInList import NotInList
         validators = []
@@ -186,10 +186,36 @@ class List(Field):
 
 class Url(String):
 
-    def __init__(self, *, required=False):
+    def __init__(self, *, required=True):
         from Core.validators.url import URL
         validators = []
 
         validators.append(URL())
 
         super().__init__(required=required)
+
+class Date(String):
+
+    def __init__(Self, *, required=True, format=None, before=None, after=None):
+        from Core.validators.date import Date
+        from Core.validators.before import Before
+        from Core.validators.after import After
+        
+        validators = []
+
+        if format is not None:
+            validators.append(Date(format))
+        if before is not None:
+            validators.append(Before(before))
+        if after is not None:
+            validators.append(After(after))
+        
+        super().__init__(required=required)
+    
+    def to_python(self, value):
+        from datetime import date
+        if value is None or value == "":
+            return None
+        if not isinstance(value, date):
+            return ValidationError("type", "invalid_format", value)
+        return value
