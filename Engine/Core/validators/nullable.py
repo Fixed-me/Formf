@@ -1,4 +1,4 @@
-from Core.errors import ValidationError
+from Engine.Core.errors import ValidationError
 
 class Nullable:
     def __init__(self, nullable):
@@ -8,7 +8,7 @@ class Nullable:
         if value == 0:
             return ValidationError (
                 code="nullable",
-                message="not nullable",
+                message="Field can't be null",
                 meta={"nullable": self.nullable}
             )
         return None

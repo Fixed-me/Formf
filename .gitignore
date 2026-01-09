@@ -2,7 +2,7 @@
 .DS_files
 
 #Tests
-/Tests
+/Engine/Core/Tests
 .testfile.py
 
 # Byte-compiled / optimized / DLL files

@@ -1,4 +1,4 @@
-from Core.errors import ValidationError
+from Engine.Core.errors import ValidationError
 
 class Email:
     def __call__(self, value):

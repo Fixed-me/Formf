@@ -1,15 +1,16 @@
 # user_code.py
-from Core.Form import Form
-from Core.Field import Date, Bool
+from Engine.Core.Form import Form
+from Engine.Core.Field import String, Int
 
 class RegisterForm(Form):
-    email = Date(format="DD-MM-YYYY")
-    password = Bool(bool=True)
+    Str = String()
+    password = Int(requiredif=(Str, True))
 
 data = {
-    "email": "19-08-2026",
-    "password": True
+    "Str": "aaaa",
+    "password": ""
 }
+
 
 form = RegisterForm(data)
 

@@ -1,4 +1,4 @@
-from Core.errors import ValidationError
+from Engine.Core.errors import ValidationError
 
 class Bool:
     def __init__(self, bool):
@@ -8,7 +8,7 @@ class Bool:
         if self.bool != value:
             return ValidationError(
                 code="Bool",
-                message="Bool is in some ways not Correct",
-                meta=value
+                message="Bool is not expected value",
+                meta={"Bool": self.bool}
             )
         return None

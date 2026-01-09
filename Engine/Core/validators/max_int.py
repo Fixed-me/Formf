@@ -1,4 +1,4 @@
-from Core.errors import ValidationError
+from Engine.Core.errors import ValidationError
 
 class Max:
     def __init__(self, maximum):
@@ -8,7 +8,7 @@ class Max:
         if value > self.maximum:
             return ValidationError(
                 code="Max",
-                message="Too large",
+                message="Integer is too large",
                 meta={"Max": self.maximum}
             )
         return None

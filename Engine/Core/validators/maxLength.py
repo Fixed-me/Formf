@@ -1,4 +1,4 @@
-from Core.errors import ValidationError
+from Engine.Core.errors import ValidationError
 
 class MaxLength:
     def __init__(self, length):
@@ -8,7 +8,7 @@ class MaxLength:
         if len(value) > self.length:
             return ValidationError(
                 code="max_length",
-                message="Too long",
+                message="String is to long",
                 meta={"max": self.length}
             )
         return None

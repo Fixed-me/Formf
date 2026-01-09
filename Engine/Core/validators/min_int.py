@@ -1,4 +1,4 @@
-from Core.errors import ValidationError
+from Engine.Core.errors import ValidationError
 
 class Min:
     def __init__(self, minimum):
@@ -8,7 +8,7 @@ class Min:
         if value < self.minimum:
             return ValidationError(
                 code="Min",
-                message="Too small",
+                message="Integer is to small",
                 meta={"Min": self.minimum}
             )
         return None
