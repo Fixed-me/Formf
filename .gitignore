@@ -1,9 +1,14 @@
 #Mac
 .DS_files
 
+# PyCharm
+.idea/
+*.iml
+
+
 #Tests
 /Engine/Core/Tests
-.testfile.py
+testfile.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
