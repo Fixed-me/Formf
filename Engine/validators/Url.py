@@ -1,7 +1,7 @@
 import re
 from Engine.Core.errors import ValidationError
 
-class URL:
+class Url:
     def __init__(self, regex):
         self.pattern = re.compile(regex)
 

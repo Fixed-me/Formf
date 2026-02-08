@@ -3,9 +3,9 @@ from datetime import datetime
 
 class Before:
 
-    def __init__(self, before, date_format):
+    def __init__(self, before, dateformat):
         self.before = before
-        self.date_format = self.parser(date_format)
+        self.date_format = self.parser(dateformat) if dateformat else self.parser("YYYY-MM-DD") # Standart Format
         self.before_datetime = datetime.strptime(self.before, self.date_format)
 
     def __call__(self, value):
@@ -19,7 +19,8 @@ class Before:
                 meta={"Before": self.before}
             )
         return None
-    
+
+    # to change the input into a valid python format
     @staticmethod
     def parser(date_format):
         format_map = {
@@ -28,7 +29,7 @@ class Before:
             "DD": "%d",
             "MM": "%m",
         }
-        # Sortierung ist wichtig, damit YYYY vor YY ersetzt wird
+        # Sorting is needed, to replace YYYY and YY
         for token in sorted(format_map, key=len, reverse=True):
             date_format = date_format.replace(token, format_map[token])
         return date_format

@@ -3,15 +3,14 @@ from datetime import datetime
 
 class After:
 
-    def __init__(self, after, date_format):
+    def __init__(self, after, dateformat=None):
         self.after = after
-        self.date_format = self.parser(date_format)
+        self.date_format = self.parser(dateformat) if dateformat else self.parser("YYYY-MM-DD") # Standart Format
         self.after_datetime = datetime.strptime(self.after, self.date_format)
 
     def __call__(self, value):
-        
-        value_date = datetime.strptime(value, self.date_format)
 
+        value_date = datetime.strptime(value, self.date_format)
         if not value_date > self.after_datetime:
             return ValidationError(
                 code="After datetime",

@@ -1,7 +1,7 @@
 from datetime import datetime
 from Engine.Core.errors import ValidationError
 
-class Date:
+class Dateformat:
     def __init__(self, date_format):
         self.date_format = date_format
         self.strptformat = self.parser(date_format)

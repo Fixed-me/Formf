@@ -1,7 +1,6 @@
 # form.py
 from Engine.Core.Field import Field
 
-
 class FormMeta(type):
     def __new__(cls, name, bases, attrs):
         # collect all Fields that where created in the class

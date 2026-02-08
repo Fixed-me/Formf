@@ -1,16 +1,14 @@
 # user_code.py
-from Engine.Core.Form import Form
-from Engine.Core.Field import String, Int
+from Engine import String, MinLength, Form
+
 
 class RegisterForm(Form):
-    Str = String()
-    password = Int(requiredif=(Str, True))
+    Str = String(validator=[MinLength(3)])
 
 data = {
-    "Str": "aaaa",
+    "Str": "aa",
     "password": ""
 }
-
 
 form = RegisterForm(data)
 

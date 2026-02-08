@@ -7,10 +7,10 @@ class NotEquals:
 
     def __call__(self, value):
         
-        if value != self.equals:
+        if not value != self.equals:
             return ValidationError(
                 code="Equals",
-                message="Values do not match",
+                message="Values match but should not match",
                 meta=self.equals
             )
         return None
