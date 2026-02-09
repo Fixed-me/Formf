@@ -235,17 +235,17 @@ class RegisterForm(Form):
 
 ## Current Status
 
-Basic field types implemented,
+Basic field types implemented
 
-Modular validator system,
+Modular validator system
 
-Built-in validators per field,
+Built-in validators per field
 
-Documentation in progress,
+Documentation in progress
 
 Tests in progress
 
-API not yet stable
+API not yet 100% stable
 
 ---
 
@@ -258,7 +258,7 @@ API not yet stable
 * Optional strict parsing mode
 * Async validation
 * Schema export (e.g. for frontend usage)
-
+* some JS/TS Extension 
 ---
 
 ## Contributing
