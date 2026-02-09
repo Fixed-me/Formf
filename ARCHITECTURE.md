@@ -236,6 +236,7 @@ Potential future extensions include:
 * pluggable error message providers
 * async validator execution
 * strict vs lenient parsing modes
+* an JS/TS Extension 
 
 These features will be evaluated against the original design goals before inclusion.
 
