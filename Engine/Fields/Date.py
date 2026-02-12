@@ -19,8 +19,9 @@ class Date(Field):
         if after is not None:
             validator.append(After(after, dateformat))
 
-        for v in validators:
-            validator.append(v)
+        if validators is not None:
+            for v in validators:
+                validator.append(v)
 
         # for the Field class to handel the Field Validators
         super().__init__(required=required, requiredif=requiredif, nullable=nullable, blank=blank, default=default , validators=validator)

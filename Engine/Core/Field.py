@@ -113,7 +113,7 @@ class Field:
         except ValidationError as e:
             return None, [e]   # STOP here
 
-        value_or_default = self._apply_default(value, other_field_value)
+        value_or_default = self._apply_default(value)
         if isinstance(value_or_default, ValidationError):
             return None, [value_or_default]
 

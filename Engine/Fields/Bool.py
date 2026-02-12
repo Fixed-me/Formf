@@ -10,8 +10,9 @@ class Bool(Field):
         if bool is not None and bool in (True, False):
             validator.append(Bool(value))
 
-        for v in validators:
-            validator.append(v)
+        if validators is not None:
+            for v in validators:
+                validator.append(v)
 
         # for the Field class to handel the Field Validators
         super().__init__(required=required, requiredif=requiredif, nullable=nullable, blank=blank, default=default,validators=validator)

@@ -13,8 +13,9 @@ class Integer(Field):
         if maxvalue is not None:
             validator.append(Max(maxvalue))
 
-        for v in validators:
-            validator.append(v)
+        if validators is not None:
+            for v in validators:
+                validator.append(v)
 
         super().__init__(required=required, nullable=nullable, blank=blank , requiredif=requiredif, default=default, validators=validator)
 

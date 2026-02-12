@@ -74,8 +74,8 @@ They can be used **explicitly** or via **built-in (standard) validators**.
 #### Explicit Validators
 
 ```python
-from Engine import String
-from Engine.Validators import MinLength
+from Engine.Fields import String
+from Engine.validators import MinLength
 
 name = String(validators=[MinLength(3)])
 ```
@@ -128,13 +128,14 @@ This means:
 #### Usage
 
 ```python
-from Engine import Form, String, Integer
+from Engine import Form, 
+from Engine.Fields import String, Integer
 
 class ExampleForm(Form):
     name = String(default="default")   # required=True, nullable=True, blank=False and Field is None and default is set take the default value
     nickname = String(blank=True)      # allows empty string
     age = Integer(nullable=False)      # None is not allowed
-    email = String(requiredIf=(name, True)) # email is only required if name is not None
+    email = String(requiredif=(name, True)) # email is only required if name is not None
 ```
 
 ---
@@ -153,8 +154,8 @@ class ExampleForm(Form):
 
 ### String
 
-* `MinLength`
-* `MaxLength`
+* `minlength`
+* `maxlength`
 * `Lowercase`
 * `Uppercase`
 * `Email`
@@ -209,13 +210,14 @@ Properties:
 ## Example: More Complex Form
 
 ```python
-from Engine import Form, String, Integer
+from Engine import Form
+from Engine.Fields import String, Integer
+from Engine.validators import Min
 
 class RegisterForm(Form):
     username = String(
-        minLength=3,
-        maxLength=20,
-        lowercase=True
+        minlength=3,
+        maxlength=20
     )
 
     password = Integer(

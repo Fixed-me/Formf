@@ -13,8 +13,9 @@ class Float(Field):
         if Min is not None:
             validator.append(Min(minvalue))
 
-        for v in validators:
-            validator.append(v)
+        if validators is not None:
+            for v in validators:
+                validator.append(v)
 
         # for the Field class to handel the Field Validators
         super().__init__(required=required, requiredif=requiredif, blank=blank, nullable=nullable, default=default ,validators=validators)
