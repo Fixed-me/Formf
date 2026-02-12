@@ -3,8 +3,8 @@ from Engine.Core.errors import ValidationError
 
 class String(Field):
     def __init__(self, *, required: bool = True, requiredif =None, nullable: bool=True, blank: bool =False, default=None, minlength: int = None, maxlength: int =None, validators=None):
-        from Engine.validators.MaxLength import MaxLength
-        from Engine.validators.MinLength import MinLength
+        from Engine.Validators.MaxLength import MaxLength
+        from Engine.Validators.MinLength import MinLength
         validator = []
 
         if minlength is not None:

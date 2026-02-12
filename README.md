@@ -75,7 +75,7 @@ They can be used **explicitly** or via **built-in (standard) validators**.
 
 ```python
 from Engine.Fields import String
-from Engine.validators import MinLength
+from Engine.Validators import MinLength
 
 name = String(validators=[MinLength(3)])
 ```
@@ -212,7 +212,8 @@ Properties:
 ```python
 from Engine import Form
 from Engine.Fields import String, Integer
-from Engine.validators import Min
+from Engine.Validators import Min
+
 
 class RegisterForm(Form):
     username = String(

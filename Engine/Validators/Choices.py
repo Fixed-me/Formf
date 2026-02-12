@@ -1,4 +1,4 @@
-from Engine.validators.InList import InList
+from Engine.Validators.InList import InList
 
 class Choices:
     def __init__(self, choices):

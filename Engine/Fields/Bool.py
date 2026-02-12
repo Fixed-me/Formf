@@ -4,7 +4,7 @@ from Engine.Core.errors import ValidationError
 class Bool(Field):
 
     def __init__(self, *, required: bool=True, requiredif=None, blank: bool=False, nullable: bool=True, default=None, value: bool=True, validators=None):
-        from Engine.validators.Bool import Bool
+        from Engine.Validators.Bool import Bool
         validator = []
 
         if bool is not None and bool in (True, False):

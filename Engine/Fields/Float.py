@@ -4,8 +4,8 @@ from Engine.Core.errors import ValidationError
 class Float(Field):
 
     def __init__(self, *, required: bool=True, requiredif=None, nullable: bool=True, blank: bool=False, default=None, maxvalue: float=None, minvalue: float=None, validators=None):
-        from Engine.validators.Max import Max
-        from Engine.validators.Min import Min
+        from Engine.Validators.Max import Max
+        from Engine.Validators.Min import Min
         validator = []
 
         if Max is not None:

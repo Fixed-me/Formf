@@ -3,8 +3,8 @@ from Engine.Core.errors import ValidationError
 
 class Integer(Field):
     def __init__(self, *, required: bool =True, requiredif= None, blank: bool=False, default=None, minvalue: int=None, maxvalue: int=None, nullable: bool=True, validators=None):
-        from Engine.validators.Min import Min
-        from Engine.validators.Max import Max
+        from Engine.Validators.Min import Min
+        from Engine.Validators.Max import Max
 
         validator = []
 
