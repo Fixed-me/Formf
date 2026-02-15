@@ -20,9 +20,9 @@ class Field:
             if required_now:
                 if self.default is None:
                     return ValidationError(
-                        "required",
-                        "This Field is required",
-                        meta={"Required": self.required}
+                        "default",
+                        "no default value provided",
+                        meta={"Default": self.default}
                     )
             # Fallback default
             value = self.default
@@ -113,9 +113,9 @@ class Field:
         except ValidationError as e:
             return None, [e]   # STOP here
 
-        value_or_default = self._apply_default(value)
-        if isinstance(value_or_default, ValidationError):
-            return None, [value_or_default]
+        value = self._apply_default(value) # Add the default option to value
+        if isinstance(value, ValidationError):
+            return None, [value]
 
         errors = self.validate(value)
         if errors:

@@ -44,11 +44,14 @@ class Form(metaclass=FormMeta):
             value, errs = field.clean(raw)
 
             if errs:
-                self._errors[name] = errs
-            else:
+                self._errors.setdefault(name, []).extend(errs)
+            elif value is not None:
                 self.cleaned_data[name] = value
 
         # the Form is only valid if no error occurred
+        if not self._errors:
+            self._run_form_validators()
+
         return not self._errors
 
     @property
@@ -60,3 +63,7 @@ class Form(metaclass=FormMeta):
             result[field_name] = [err.to_dict() for err in errors]
 
         return result
+
+    def _run_form_validators(self):
+        for validator in getattr(self, "form_validators", []):
+            validator(self)

@@ -1,14 +1,14 @@
 from Engine.Core.errors import ValidationError
 
-class NotInList:
+class InList:
     def __init__(self, listvalue):
         self.list = set(listvalue)
 
     def __call__(self, value):
-        if value in self.list:
+        if value not in self.list:
             return ValidationError(
-                code="List",
-                 message="List in origin List",
+                code="InList",
+                message="List not in origin List",
                 meta={"List": self.list}
             )
         return None

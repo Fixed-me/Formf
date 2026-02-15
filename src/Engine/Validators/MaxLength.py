@@ -7,7 +7,7 @@ class MaxLength:
     def __call__(self, value):
         if len(value) > self.length:
             return ValidationError(
-                code="max_length",
+                code="Max-length",
                 message="String is to long",
                 meta={"max": self.length}
             )

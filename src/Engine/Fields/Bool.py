@@ -15,7 +15,7 @@ class Bool(Field):
                 validator.append(v)
 
         # for the Field class to handel the Field Validators
-        super().__init__(required=required, requiredif=requiredif, nullable=nullable, blank=blank, default=default,validators=validator)
+        super().__init__(required=required, requiredif=requiredif, nullable=nullable, blank=blank, default=default, validators=validator)
 
     # Validators would return an "actual" Error if it isn't the Correct Type
     def to_python(self, value):

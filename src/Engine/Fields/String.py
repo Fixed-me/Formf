@@ -8,15 +8,15 @@ class String(Field):
         validator = []
 
         if minlength is not None:
-            validators.append(MinLength(minlength))
+            validator.append(MinLength(minlength))
         if maxlength is not None:
-            validators.append(MaxLength(maxlength))
+            validator.append(MaxLength(maxlength))
 
         if validators is not None:
             for v in validators:
                 validator.append(v)
 
-        super().__init__(required=required, nullable=nullable, blank=blank, requiredif=requiredif, default=default, validators=validators)
+        super().__init__(required=required, nullable=nullable, blank=blank, requiredif=requiredif, default=default, validators=validator)
 
     # Validators would return an "actual" Error if it isn't the Correct Type
     def to_python(self, value):
