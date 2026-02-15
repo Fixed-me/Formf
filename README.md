@@ -18,11 +18,30 @@ The goal is to make forms **declarative**, **extensible**, and **easy to test**.
 
 ## Installation
 
+## User
 ```md
 git clone https://github.com/Fixed-me/Form-Engine.git
 cd Form-Engine
 pip install -e .
 ````
+
+## Development
+Requirements:
+
+- python 3.10+
+- uv
+
+Install uv:
+https://astral.sh/uv
+
+Setup Project:
+```md
+git clone https://github.com/Fixed-me/Form-Engine.git
+cd Form-Engine
+uv sync --extra dev
+uv run pytest #to Test everything
+```
+
 ---
 ## Core Concepts
 
@@ -31,11 +50,12 @@ pip install -e .
 A `Form` is a class composed of multiple Fields.
 
 ```python
-from Engine import Form, String, Integer
+from src.Engine import Form, String, Integer
+
 
 class UserForm(Form):
-    name = String(minLength=3)
-    password = Integer(validators=[Min(8)])
+  name = String(minLength=3)
+  password = Integer(validators=[Min(8)])
 ````
 
 * Each form automatically collects all defined fields
@@ -74,8 +94,8 @@ They can be used **explicitly** or via **built-in (standard) validators**.
 #### Explicit Validators
 
 ```python
-from Engine.Fields import String
-from Engine.Validators import MinLength
+from src.Engine import String
+from src.Engine import MinLength
 
 name = String(validators=[MinLength(3)])
 ```
@@ -128,14 +148,16 @@ This means:
 #### Usage
 
 ```python
-from Engine import Form, 
-from Engine.Fields import String, Integer
+from src.Engine import Form,
+from src.Engine import String, Integer
+
 
 class ExampleForm(Form):
-    name = String(default="default")   # required=True, nullable=True, blank=False and Field is None and default is set take the default value
-    nickname = String(blank=True)      # allows empty string
-    age = Integer(nullable=False)      # None is not allowed
-    email = String(requiredif=(name, True)) # email is only required if name is not None
+  name = String(
+    default="default")  # required=True, nullable=True, blank=False and Field is None and default is set take the default value
+  nickname = String(blank=True)  # allows empty string
+  age = Integer(nullable=False)  # None is not allowed
+  email = String(requiredif=(name, True))  # email is only required if name is not None
 ```
 
 ---
@@ -210,20 +232,20 @@ Properties:
 ## Example: More Complex Form
 
 ```python
-from Engine import Form
-from Engine.Fields import String, Integer
-from Engine.Validators import Min
+from src.Engine import Form
+from src.Engine import String, Integer
+from src.Engine import Min
 
 
 class RegisterForm(Form):
-    username = String(
-        minlength=3,
-        maxlength=20
-    )
+  username = String(
+    minlength=3,
+    maxlength=20
+  )
 
-    password = Integer(
-        validators=[Min(8)]
-    )
+  password = Integer(
+    validators=[Min(8)]
+  )
 ```
 
 ---
