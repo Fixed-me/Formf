@@ -216,32 +216,6 @@ Inheritance-heavy extension is intentionally avoided.
 
 ---
 
-## Known Limitations
-
-* No cross-field validation yet
-* No async validation
-* No localization system implemented
-* Error message customization is limited
-
-These limitations are intentional and tracked as future work.
-
----
-
-## Future Architecture Considerations
-
-Potential future extensions include:
-
-* cross-field validation layer
-* schema export for frontend frameworks
-* pluggable error message providers
-* async validator execution
-* strict vs lenient parsing modes
-* an JS/TS Extension 
-
-These features will be evaluated against the original design goals before inclusion.
-
----
-
 ## Architectural Stability
 
 This architecture is expected to remain stable at the conceptual level.
