@@ -1,5 +1,5 @@
 
-# Form Engine
+# Formf
 
 **Work in Progress**  
 This Form Engine is currently under active development.  
@@ -9,7 +9,7 @@ APIs, validation behavior, and internal structures may change.
 
 ## Overview
 
-The Form Engine is a modular Python framework for defining, validating, and processing forms.  
+Formf is a modular Python framework for defining, validating, and processing forms.  
 It is built around **Fields**, **Validators**, and a central **Form** class that ties everything together.
 
 The goal is to make forms **declarative**, **extensible**, and **easy to test**.
@@ -21,7 +21,7 @@ The goal is to make forms **declarative**, **extensible**, and **easy to test**.
 ## User
 ```md
 git clone https://github.com/Fixed-me/Form-Engine.git
-cd Form-Engine
+cd Formf
 pip install -e .
 ````
 
@@ -37,7 +37,7 @@ https://astral.sh/uv
 Setup Project:
 ```md
 git clone https://github.com/Fixed-me/Form-Engine.git
-cd Form-Engine
+cd Formf
 uv sync --extra dev
 uv run pytest #to Test everything
 ```
@@ -293,6 +293,7 @@ API not yet 100% stable
 * Async validation
 * Schema export (e.g. for frontend usage)
 * some JS/TS Extension 
+* everything else in "TODOs.md" and "ARCHITECTURE.md"
 ---
 
 ## Contributing
