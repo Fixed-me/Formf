@@ -3,8 +3,8 @@ from Formf.Core.errors import ValidationError
 
 class String(Field):
     def __init__(self, *, required: bool = True, requiredif =None, nullable: bool=True, blank: bool =False, default=None, minlength: int = None, maxlength: int =None, validators=None):
-        from Formf.Validators.MaxLength import MaxLength
-        from Formf.Validators.MinLength import MinLength
+        from Formf.validators.MaxLength import MaxLength
+        from Formf.validators.MinLength import MinLength
         validator = []
 
         if minlength is not None:
@@ -18,7 +18,7 @@ class String(Field):
 
         super().__init__(required=required, nullable=nullable, blank=blank, requiredif=requiredif, default=default, validators=validator)
 
-    # Validators would return an "actual" Error if it isn't the Correct Type
+    # validators would return an "actual" Error if it isn't the Correct Type
     def to_python(self, value):
         if value is None or value == "":
             return None

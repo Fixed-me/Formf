@@ -1,5 +1,5 @@
 import pytest
-from Formf.Validators import Uppercase
+from Formf.validators import Uppercase
 
 def test_uppercase_validator_accepts_value():
     v = Uppercase(True) # Form

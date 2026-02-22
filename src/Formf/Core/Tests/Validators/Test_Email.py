@@ -1,5 +1,5 @@
 import pytest
-from Formf.Validators import Email
+from Formf.validators import Email
 
 def test_email_validator_accepts_value():
     v = Email() # because email checks if @ in String

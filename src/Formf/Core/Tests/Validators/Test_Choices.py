@@ -1,5 +1,5 @@
 import pytest
-from Formf.Validators import Choices
+from Formf.validators import Choices
 
 def test_choices_validator_accepts_value():
     v = Choices([True, 1, "Test"]) # Form

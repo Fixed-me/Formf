@@ -1,5 +1,5 @@
 import pytest
-from Formf.Validators import Equals
+from Formf.validators import Equals
 
 def test_equals_validator_accepts_value():
     v = Equals(5) # Form

@@ -1,5 +1,5 @@
 import pytest
-from Formf.Validators import Pattern
+from Formf.validators import Pattern
 
 def test_pattern_validator_accepts_value():
     v = Pattern("numeric")

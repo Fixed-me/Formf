@@ -1,6 +1,6 @@
 # tests/Test_Field.py
 import pytest
-from Formf.Fields import String
+from Formf.fields import String
 
 def test_string_field_required():
     field = String(required=True)

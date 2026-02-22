@@ -1,5 +1,5 @@
 import pytest
-from Formf.Validators import MaxLength
+from Formf.validators import MaxLength
 
 def test_maxlength_validator_accepts_value():
     v = MaxLength(6) # Form

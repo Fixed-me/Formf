@@ -1,5 +1,5 @@
 import pytest
-from Formf.Validators import Before
+from Formf.validators import Before
 
 def test_before_validator_accepts_value():
     v = Before("2027-01-01") # Form

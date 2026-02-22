@@ -1,4 +1,4 @@
-from Formf.Validators.InList import InList
+from Formf.validators.InList import InList
 
 class Choices:
     def __init__(self, choices):

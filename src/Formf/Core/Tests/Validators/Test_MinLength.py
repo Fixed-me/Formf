@@ -1,5 +1,5 @@
 import pytest
-from Formf.Validators import MinLength
+from Formf.validators import MinLength
 
 def test_minlength_validator_accepts_value():
     v = MinLength(5) # Form

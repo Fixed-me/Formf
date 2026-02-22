@@ -2,8 +2,8 @@
 
 import pytest
 from Formf.Core.Form import Form
-from Formf.Fields.String import String
-from Formf.Fields.Integer import Integer
+from Formf.fields.String import String
+from Formf.fields.Integer import Integer
 
 def test_form_requiredif():
     class MyForm(Form):
@@ -47,7 +47,7 @@ def test_form_invalid_field():
     assert not form.is_valid()
     assert "name" in form.errors
     assert "age" in form.errors
-    # cleaned_data should only have valid Fields
+    # cleaned_data should only have valid fields
     assert "name" not in form.cleaned_data
     assert "age" not in form.cleaned_data
 

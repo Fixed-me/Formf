@@ -3,8 +3,8 @@ from Formf.Core.errors import ValidationError
 
 class Integer(Field):
     def __init__(self, *, required: bool =True, requiredif= None, blank: bool=False, default=None, minvalue: int=None, maxvalue: int=None, nullable: bool=True, validators=None):
-        from Formf.Validators.Min import Min
-        from Formf.Validators.Max import Max
+        from Formf.validators.Min import Min
+        from Formf.validators.Max import Max
 
         validator = []
 
@@ -19,7 +19,7 @@ class Integer(Field):
 
         super().__init__(required=required, nullable=nullable, blank=blank , requiredif=requiredif, default=default, validators=validator)
 
-    # Validators would return an "actual" Error if it isn't the Correct Type
+    # validators would return an "actual" Error if it isn't the Correct Type
     def to_python(self, value):
         if value is None or value == "":
             return None

@@ -1,5 +1,5 @@
 import pytest
-from Formf.Validators import Dateformat
+from Formf.validators import Dateformat
 
 def test_dateformat_validator_accepts_value():
     v = Dateformat("YYYY-MM-DD") # Form

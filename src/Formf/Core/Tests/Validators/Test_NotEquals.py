@@ -1,5 +1,5 @@
 import pytest
-from Formf.Validators import NotEquals
+from Formf.validators import NotEquals
 
 def test_notequals_validator_accepts_value():
     v = NotEquals(5) # Form

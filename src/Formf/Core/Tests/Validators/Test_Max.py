@@ -1,5 +1,5 @@
 import pytest
-from Formf.Validators import Max
+from Formf.validators import Max
 
 def test_max_validator_accepts_value():
     v = Max(5) # Form

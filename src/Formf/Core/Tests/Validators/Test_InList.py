@@ -1,5 +1,5 @@
 import pytest
-from Formf.Validators import InList
+from Formf.validators import InList
 
 def test_inlist_validator_accepts_value():
     v = InList((5,6,7,"HI")) # Form

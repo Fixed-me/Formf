@@ -1,5 +1,5 @@
 import pytest
-from Formf.Validators import Bool
+from Formf.validators import Bool
 
 def test_bool_validator_accepts_value():
     v = Bool(True) # Form

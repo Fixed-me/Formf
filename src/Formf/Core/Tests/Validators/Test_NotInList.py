@@ -1,5 +1,5 @@
 import pytest
-from Formf.Validators import NotInList
+from Formf.validators import NotInList
 
 def test_notinlist_validator_accepts_value():
     v = NotInList((5,6,7,"HI")) # Form

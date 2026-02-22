@@ -3,10 +3,10 @@ from Formf.Core.Field import Field
 
 class FormMeta(type):
     def __new__(cls, name, bases, attrs):
-        # collect all Fields that where created in the class
+        # collect all fields that where created in the class
         fields = {}
 
-        # Extract all Fields with the class Definition,
+        # Extract all fields with the class Definition,
         # to process them
         for key, value in list(attrs.items()):
             if isinstance(value, Field):
@@ -36,7 +36,7 @@ class Form(metaclass=FormMeta):
         self.cleaned_data = {}
 
     def is_valid(self):
-        # validate all Fields separately from each other
+        # validate all fields separately from each other
         for name, field in self._fields.items():
             raw = self.data.get(name)
 

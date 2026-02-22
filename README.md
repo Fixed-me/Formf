@@ -20,7 +20,7 @@ The goal is to make forms **declarative**, **extensible**, and **easy to test**.
 
 ## User
 ```md
-git clone https://github.com/Fixed-me/Form-Engine.git
+git clone https://github.com/Fixed-me/Formf.git
 cd Formf
 pip install -e .
 ````
@@ -36,7 +36,7 @@ https://astral.sh/uv
 
 Setup Project:
 ```md
-git clone https://github.com/Fixed-me/Form-Engine.git
+git clone https://github.com/Fixed-me/Formf.git
 cd Formf
 uv sync --extra dev
 uv run pytest #to Test everything
@@ -51,8 +51,9 @@ A `Form` is a class composed of multiple Fields.
 
 ```python
 from Formf import Form
-from Formf.Fields import String, Integer
-from Formf.Validators import Min
+from Formf.fields import String, Integer
+from Formf.validators import Min
+
 
 class UserForm(Form):
   name = String(minLength=3)
@@ -95,8 +96,8 @@ They can be used **explicitly** or via **built-in (standard) validators**.
 #### Explicit Validators
 
 ```python
-from Formf.Fields import String
-from Formf.Validators import MinLength
+from Formf.fields import String
+from Formf.validators import MinLength
 
 name = String(validators=[MinLength(3)])
 ```
@@ -150,7 +151,7 @@ This means:
 
 ```python
 from Formf import Form
-from Formf.Fields import String, Integer
+from Formf.fields import String, Integer
 
 
 class ExampleForm(Form):
@@ -234,8 +235,8 @@ Properties:
 
 ```python
 from Formf import Form
-from Formf.Fields import String, Integer
-from Formf.Validators import Min
+from Formf.fields import String, Integer
+from Formf.validators import Min
 
 
 class RegisterForm(Form):

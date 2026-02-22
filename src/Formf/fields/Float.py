@@ -4,8 +4,8 @@ from Formf.Core.errors import ValidationError
 class Float(Field):
 
     def __init__(self, *, required: bool=True, requiredif=None, nullable: bool=True, blank: bool=False, default=None, maxvalue: float=None, minvalue: float=None, validators=None):
-        from Formf.Validators.Max import Max
-        from Formf.Validators.Min import Min
+        from Formf.validators.Max import Max
+        from Formf.validators.Min import Min
         validator = []
 
         if Max is not None:
@@ -17,10 +17,10 @@ class Float(Field):
             for v in validators:
                 validator.append(v)
 
-        # for the Field class to handel the Field Validators
+        # for the Field class to handel the Field validators
         super().__init__(required=required, requiredif=requiredif, blank=blank, nullable=nullable, default=default ,validators=validator)
 
-    # Validators would return an "actual" Error if it isn't the Correct Type
+    # validators would return an "actual" Error if it isn't the Correct Type
     def to_python(self, value):
         if value is None or value == "":
             return None

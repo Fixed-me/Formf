@@ -1,5 +1,5 @@
 import pytest
-from Formf.Validators import Regex
+from Formf.validators import Regex
 
 def test_regex_validator_accepts_value():
     v = Regex("^[^@]+@[^@]+\.[^@]+$") # Form

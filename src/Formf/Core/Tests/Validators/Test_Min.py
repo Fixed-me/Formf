@@ -1,5 +1,5 @@
 import pytest
-from Formf.Validators import Min
+from Formf.validators import Min
 
 def test_min_validator_accepts_value():
     v = Min(5) # Form

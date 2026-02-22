@@ -1,5 +1,5 @@
 import pytest
-from Formf.Validators import Lowercase
+from Formf.validators import Lowercase
 
 def test_lowercase_validator_accepts_value():
     v = Lowercase(True) # Form
