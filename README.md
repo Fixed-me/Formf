@@ -50,9 +50,9 @@ uv run pytest #to Test everything
 A `Form` is a class composed of multiple Fields.
 
 ```python
-from Engine import Form
-from Engine.Fields import String, Integer
-from Engine.Validators import Min
+from Formf import Form
+from Formf.Fields import String, Integer
+from Formf.Validators import Min
 
 class UserForm(Form):
   name = String(minLength=3)
@@ -95,8 +95,8 @@ They can be used **explicitly** or via **built-in (standard) validators**.
 #### Explicit Validators
 
 ```python
-from Engine.Fields import String
-from Engine.Validators import MinLength
+from Formf.Fields import String
+from Formf.Validators import MinLength
 
 name = String(validators=[MinLength(3)])
 ```
@@ -149,8 +149,8 @@ This means:
 #### Usage
 
 ```python
-from Engine import Form
-from Engine.Fields import String, Integer
+from Formf import Form
+from Formf.Fields import String, Integer
 
 
 class ExampleForm(Form):
@@ -233,9 +233,9 @@ Properties:
 ## Example: More Complex Form
 
 ```python
-from Engine import Form
-from Engine.Fields import String, Integer
-from Engine.Validators import Min
+from Formf import Form
+from Formf.Fields import String, Integer
+from Formf.Validators import Min
 
 
 class RegisterForm(Form):
