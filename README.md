@@ -1,53 +1,172 @@
-
 # Formf
 
 **Work in Progress**  
-This Form Engine is currently under active development.  
 APIs, validation behavior, and internal structures may change.
-
----
 
 ## Overview
 
-Formf is a modular Python framework for defining, validating, and processing forms.  
-It is built around **Fields**, **Validators**, and a central **Form** class that ties everything together.
+Formf is a modular Python form validation framework.
+It is built around:
 
-The goal is to make forms **declarative**, **extensible**, and **easy to test**.
-
----
+- `Form` for orchestration
+- `Field` for type conversion + field-level rules
+- `validators` for reusable single-field checks
+- `formvalidators` for cross-field checks
 
 ## Installation
 
-## User
-```md
+### User
+
+```bash
 git clone https://github.com/Fixed-me/Formf.git
 cd Formf
 pip install -e .
-````
+```
 
-## Development
+### Development
+
 Requirements:
 
-- python 3.10+
-- uv
+- Python 3.10+
+- `uv`
 
-Install uv:
-https://astral.sh/uv
-
-Setup Project:
-```md
+```bash
 git clone https://github.com/Fixed-me/Formf.git
 cd Formf
 uv sync --extra dev
-uv run pytest #to Test everything
+uv run pytest
 ```
 
----
 ## Core Concepts
 
-### Form
+### Form and Field at a glance
 
-A `Form` is a class composed of multiple Fields.
+| Concept | Responsibility | Input | Output |
+|---|---|---|---|
+| `Form` | Collect fields, run validation, aggregate errors | `dict` data | `is_valid()`, `cleaned_data`, `errors` |
+| `Field` | Convert raw value, run field validators | single value | converted value or field errors |
+| `validator` | Validate one field rule | value | `ValidationError` or `None` |
+| `formvalidator` | Validate relationships between fields | form instance | `ValidationError` or `None` |
+
+### Validation flow
+
+| Step | What happens |
+|---|---|
+| 1 | Form iterates through declared fields |
+| 2 | Each field runs `to_python()`, default handling, built-in checks, and custom validators |
+| 3 | `cleaned_data` is filled with valid field values |
+| 4 | If no field-level errors exist, `form_validators` are executed |
+| 5 | Cross-field errors are stored under `errors["__all__"]` |
+
+## Fields
+
+Available field types:
+
+| Field | Type conversion |
+|---|---|
+| `String` | value must be `str` (empty becomes `None`) |
+| `Integer` | value is cast to `int` |
+| `Float` | value must be `float` |
+| `Bool` | value must be `bool` |
+| `Date` | parses date strings with supported formats |
+| `List` | value is cast to `list` |
+
+### Shared field options
+
+These options are available on all fields:
+
+| Option | Default | Meaning |
+|---|---|---|
+| `required` | `True` | field must be present |
+| `requiredif` | `None` | field becomes required when condition matches |
+| `nullable` | `True` | allow `None` |
+| `blank` | `False` | blank handling for string-like input |
+| `default` | `None` | fallback value if input is missing/`None` |
+| `validators` | `None` | list of additional validator instances |
+
+### Field-specific shortcut options
+
+| Field | Shortcut options |
+|---|---|
+| `String` | `minlength`, `maxlength` |
+| `Integer` | `minvalue`, `maxvalue` |
+| `Float` | `minvalue`, `maxvalue` |
+| `Date` | `dateformat`, `before`, `after` |
+| `Bool` | `value` |
+| `List` | `inlist`, `notinlist` |
+
+## `requiredif` (extended behavior)
+
+`requiredif` now supports multiple condition styles.
+
+### 1) Tuple: empty/not-empty or exact value
+
+```python
+email = String(requiredif=("name", True))        # required if name is not empty
+suffix = String(requiredif=("middle_name", False))  # required if middle_name is empty
+note = String(requiredif=("status", "approved")) # required if status == "approved"
+```
+
+### 2) Callable
+
+```python
+age = Integer(requiredif=lambda form: form.data.get("name") == "Alice")
+```
+
+### 3) Dict rule
+
+```python
+nickname = String(requiredif={"field": "name", "not_empty": True})
+note = String(requiredif={"field": "status", "equals": "approved"})
+suffix = String(requiredif={"field": "middle_name", "is_empty": True})
+```
+
+### 4) Multiple fields with mode
+
+```python
+reason = String(
+    requiredif={"fields": ["role", "plan"], "equals": "pro", "mode": "any"}
+)
+
+alias = String(
+    requiredif={"fields": ["first_name", "last_name"], "not_empty": True, "mode": "all"}
+)
+```
+
+### 5) List of conditions (OR)
+
+```python
+support_note = String(
+    requiredif=[
+        ("status", "approved"),
+        {"field": "role", "equals": "admin"},
+    ]
+)
+```
+
+## Validators
+
+### Field validators (`Formf.validators`)
+
+| Group | Validators |
+|---|---|
+| General | `Equals`, `NotEquals`, `InList`, `NotInList`, `Choices`, `Pattern`, `Regex` |
+| String | `MinLength`, `MaxLength`, `Lowercase`, `Uppercase`, `Email`, `Url` |
+| Number | `Min`, `Max` |
+| Bool | `Bool` |
+| Date | `Before`, `After`, `Dateformat` |
+
+### Cross-field validators (`Formf.formvalidators`)
+
+| Validator | Meaning | Error code |
+|---|---|---|
+| `Equals(field1, field2)` | `field1` must equal `field2` | `Equalsform` |
+| `AfterDate(field1, field2)` | `field1` must be after `field2` | `AfterDateForm` |
+| `BeforeDate(field1, field2)` | `field1` must be before `field2` | `BeforeDateForm` |
+
+## Examples
+
+### Basic form
 
 ```python
 from Formf import Form
@@ -56,255 +175,99 @@ from Formf.validators import Min
 
 
 class UserForm(Form):
-  name = String(minLength=3)
-  password = Integer(validators=[Min(8)])
-````
-
-* Each form automatically collects all defined fields
-* Validation is performed field by field
-* Errors are returned in a structured format
-
----
-
-### Fields
-
-Fields represent individual input values, including type handling, conversion, and validation.
-
-Currently available Fields:
-
-* `Bool`
-* `Date`
-* `Float`
-* `Integer`
-* `List`
-* `String`
-
-Example:
-
-```python
-name = String()
-age = Integer()
+    name = String(minlength=3)
+    password = Integer(validators=[Min(8)])
 ```
 
----
-
-### Validators
-
-Validators ensure that values meet specific rules.
-They can be used **explicitly** or via **built-in (standard) validators**.
-
-#### Explicit Validators
+### Cross-field form
 
 ```python
+from Formf import Form
 from Formf.fields import String
-from Formf.validators import MinLength
-
-name = String(validators=[MinLength(3)])
-```
-
-#### Standard Validators (Shortcuts)
-
-Many validators are available directly as keyword arguments on a Field:
-
-```python
-name = String(minLength=3)
-email = String(email=True)
-```
-
-Internally, these arguments are automatically converted into validator instances.
-
-### Field Standard Validators
-
-All Fields provide a set of built-in standard validators that can be enabled
-or configured directly via keyword arguments.
-
-These validators exist on **every Field type** and are part of the public API.
-
----
-
-#### Default Behavior
-
-Unless explicitly overridden, all Fields behave as follows:
-
-- `required = True`
-- `nullable = True`
-- `blank = False`
-
-This means:
-- a field is required by default
-- `None` is accepted by default
-- empty values (e.g. empty strings) are **not** accepted by default
-
----
-
-#### Available Standard Validators
-
-- `required`
-- `requiredIf`
-- `nullable`
-- `blank`
-- `default`
-
----
-
-#### Usage
-
-```python
-from Formf import Form
-from Formf.fields import String, Integer
-
-
-class ExampleForm(Form):
-  name = String(
-    default="default")  # required=True, nullable=True, blank=False and Field is None and default is set take the default value
-  nickname = String(blank=True)  # allows empty string
-  age = Integer(nullable=False)  # None is not allowed
-  email = String(requiredif=(name, True))  # email is only required if name is not None
-```
-
----
-
-## Available Validators
-
-### General
-
-* `Equals`
-* `NotEquals`
-* `InList`
-* `NotInList`
-* `Choices`
-* `Pattern`
-* `Regex`
-
-### String
-
-* `minlength`
-* `maxlength`
-* `Lowercase`
-* `Uppercase`
-* `Email`
-* `Url`
-
-### Integer / Number
-
-* `Min`
-* `Max`
-
-### Bool
-
-* `Bool`
-
-### Date / Datetime
-
-* `BeforeDatetime`
-* `AfterDatetime`
-* `DateFormat`
-
----
-
-## Validation Errors
-
-Each validator returns a `ValidationError` object on failure.
-
-Structure:
-
-```python
-ValidationError(
-    code="validator_name",
-    message="A default error message",
-    meta={
-        "name": expected_value
-    }
-)
-```
-
-Properties:
-
-* **code**
-  Machine-readable error code (e.g. for frontends or translations)
-
-* **message**
-  default error message
-
-* **meta**
-  Additional context (e.g. expected values or limits)
-
----
-
-## Example: More Complex Form
-
-```python
-from Formf import Form
-from Formf.fields import String, Integer
-from Formf.validators import Min
+from Formf.formvalidators import Equals, BeforeDate
 
 
 class RegisterForm(Form):
-  username = String(
-    minlength=3,
-    maxlength=20
-  )
+    password = String()
+    password_repeat = String()
+    start_date = String()
+    end_date = String()
 
-  password = Integer(
-    validators=[Min(8)]
-  )
+    form_validators = [
+        Equals("password", "password_repeat"),
+        BeforeDate("start_date", "end_date"),
+    ]
+
+
+form = RegisterForm(
+    {
+        "password": "abc123",
+        "password_repeat": "abc124",
+        "start_date": "10.01.2020",
+        "end_date": "09.01.2020",
+    }
+)
+
+form.is_valid()  # False
+form.errors
+# {
+#   "__all__": [
+#     {"code": "Equalsform", ...},
+#     {"code": "BeforeDateForm", ...}
+#   ]
+# }
 ```
 
----
+## Validation Errors
 
-## Architecture (Short Overview)
+Errors are exposed in a serializable dict format.
 
-* `Form`
-  Coordinates fields and validation
+```python
+{
+    "field_name": [
+        {
+            "code": "validator_name",
+            "message": "Error message",
+            "meta": {"key": "value"}
+        }
+    ],
+    "__all__": [
+        {
+            "code": "cross_field_error",
+            "message": "Cross-field error message",
+            "meta": {}
+        }
+    ]
+}
+```
 
-* `Field`
-  Holds type, value, validators, and standard options
+`"__all__"` is reserved for form-level (cross-field) errors.
 
-* `Validator`
-  Isolated validation rules, independently testable
+## Testing
 
-* `ValidationError`
-  Unified error representation
+Run all tests:
 
----
+```bash
+pytest
+```
+
+Run cross-field tests only:
+
+```bash
+pytest src/Formf/Core/Tests/Formvalidators
+```
 
 ## Current Status
 
-Basic field types implemented
-
-Modular validator system
-
-Built-in validators per field
-
-Documentation in progress
-
-Tests in progress
-
-API not yet 100% stable
-
----
-
-## Planned Features (Ideas)
-
-* Cross-field validation (e.g. `password == password_repeat`)
-* Multilingual error messages
-* Custom error messages per validator
-* JSON / dict export of validation errors
-* Optional strict parsing mode
-* Async validation
-* Schema export (e.g. for frontend usage)
-* some JS/TS Extension 
-* everything else in "TODOs.md" and "ARCHITECTURE.md"
----
+- Field validation is implemented
+- Cross-field validation is implemented via `form_validators`
+- Basic tests for field and formvalidators are in place
+- API is still evolving
 
 ## Contributing
 
 Pull requests, ideas, and feedback are welcome.
-Since the project is still evolving, please coordinate before making large changes.
-
----
 
 ## License
 
-This project is licensed under the MIT License.
-
+MIT

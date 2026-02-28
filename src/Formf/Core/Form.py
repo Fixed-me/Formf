@@ -41,7 +41,7 @@ class Form(metaclass=FormMeta):
             raw = self.data.get(name)
 
             # clean does Type conversion and validation
-            value, errs = field.clean(raw)
+            value, errs = field.clean(raw, form=self)
 
             if errs:
                 self._errors.setdefault(name, []).extend(errs)
@@ -66,4 +66,6 @@ class Form(metaclass=FormMeta):
 
     def _run_form_validators(self):
         for validator in getattr(self, "form_validators", []):
-            validator(self)
+            error = validator(self)
+            if error is not None:
+                self._errors.setdefault("__all__", []).append(error)
