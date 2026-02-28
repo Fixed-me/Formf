@@ -1,4 +1,4 @@
-* cross-field validation layer → work in Progress
+* ~~cross-field validation layer → for now done~~ 
 
 * schema export for frontend frameworks
 
