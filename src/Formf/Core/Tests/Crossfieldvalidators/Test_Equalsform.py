@@ -1,14 +1,14 @@
 import pytest
 from Formf.Core.Form import Form
 from Formf.fields.String import String
-from Formf.formvalidators import Equals
+from Formf.crossfieldvalidators import Equals
 
 
 def test_form_equals_validator_rejects_mismatch():
     class RegisterForm(Form):
         password = String()
         password_repeat = String()
-        form_validators = [Equals("password", "password_repeat")]
+        crossfield_validators = [Equals("password", "password_repeat")]
 
     form = RegisterForm({"password": "abc123", "password_repeat": "abc124"})
 
@@ -21,7 +21,7 @@ def test_form_equals_validator_accepts_match():
     class RegisterForm(Form):
         password = String()
         password_repeat = String()
-        form_validators = [Equals("password", "password_repeat")]
+        crossfield_validators = [Equals("password", "password_repeat")]
 
     form = RegisterForm({"password": "abc123", "password_repeat": "abc123"})
 

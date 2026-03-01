@@ -1,6 +1,6 @@
 from Formf import Form
 from Formf.fields import String
-from Formf.formvalidators import Equals, BeforeDate
+from Formf.crossfieldvalidators import Equals, BeforeDate
 
 
 class CheckoutForm(Form):
@@ -9,7 +9,7 @@ class CheckoutForm(Form):
     shipping_date = String()
     delivery_date = String()
 
-    form_validators = [
+    crossfield_validators = [
         Equals("password", "password_repeat"),
         BeforeDate("shipping_date", "delivery_date"),
     ]

@@ -1,12 +1,12 @@
 from Formf import Form
 from Formf.fields import String
-from Formf.formvalidators import Equals
+from Formf.crossfieldvalidators import Equals
 
 
 class RegisterForm(Form):
     password = String(minlength=8)
     password_repeat = String(minlength=8)
-    form_validators = [Equals("password", "password_repeat")]
+    crossfield_validators = [Equals("password", "password_repeat")]
 
 
 form = RegisterForm({"password": "abc12345", "password_repeat": "abc12344"})

@@ -1,6 +1,6 @@
 from Formf import Form
 from Formf.fields import String
-from Formf.formvalidators import BeforeDate, AfterDate
+from Formf.crossfieldvalidators import BeforeDate, AfterDate
 
 
 class DateRangeForm(Form):
@@ -9,7 +9,7 @@ class DateRangeForm(Form):
 
     # both rules are shown for demonstration.
     # in real usage you typically keep only one of them.
-    form_validators = [
+    crossfield_validators = [
         BeforeDate("start_date", "end_date"),
         AfterDate("end_date", "start_date"),
     ]

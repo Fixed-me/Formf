@@ -7,24 +7,24 @@ from Formf.fields.Float import Float
 from Formf.fields.Bool import Bool
 from Formf.fields.Date import Date
 from Formf.fields.List import List
-from Formf.formvalidators import Equals
+from Formf.crossfieldvalidators import Equals
 
 
-def test_form_to_schema_exports_fields_validators_and_formvalidators():
+def test_form_to_schema_exports_fields_validators_and_crossfieldvalidators():
     class RegisterForm(Form):
         status = String(required=False)
         email = String(requiredif=("status", "approved"), minlength=5)
         age = Integer(requiredif=lambda form: form.data.get("email") is not None, minvalue=18)
         password = String(minlength=8)
         password_repeat = String(minlength=8)
-        form_validators = [Equals("password", "password_repeat")]
+        crossfield_validators = [Equals("password", "password_repeat")]
 
     schema = RegisterForm({}).to_schema()
 
     assert schema["form"] == "RegisterForm"
     assert schema["version"] == "1.0"
     assert "fields" in schema
-    assert "form_validators" in schema
+    assert "crossfield_validators" in schema
     assert schema["errors_schema"]["form_error_key"] == "__all__"
 
     email_schema = schema["fields"]["email"]
@@ -38,9 +38,9 @@ def test_form_to_schema_exports_fields_validators_and_formvalidators():
     assert age_schema["requiredif"]["type"] == "callable"
     assert age_schema["requiredif"]["exportable"] is False
 
-    assert schema["form_validators"][0]["name"] == "Equals"
-    assert schema["form_validators"][0]["params"]["field1"] == "password"
-    assert schema["form_validators"][0]["params"]["field2"] == "password_repeat"
+    assert schema["crossfield_validators"][0]["name"] == "Equals"
+    assert schema["crossfield_validators"][0]["params"]["field1"] == "password"
+    assert schema["crossfield_validators"][0]["params"]["field2"] == "password_repeat"
 
 
 def test_form_schema_is_json_serializable():

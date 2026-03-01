@@ -11,7 +11,7 @@ It is built around:
 - `Form` for orchestration
 - `Field` for type conversion + field-level rules
 - `validators` for reusable single-field checks
-- `formvalidators` for cross-field checks
+- `crossfieldvalidators` for cross-field checks
 
 ## Installation
 
@@ -46,7 +46,7 @@ uv run pytest
 | `Form` | Collect fields, run validation, aggregate errors | `dict` data | `is_valid()`, `cleaned_data`, `errors` |
 | `Field` | Convert raw value, run field validators | single value | converted value or field errors |
 | `validator` | Validate one field rule | value | `ValidationError` or `None` |
-| `formvalidator` | Validate relationships between fields | form instance | `ValidationError` or `None` |
+| `crossfieldvalidator` | Validate relationships between fields | form instance | `ValidationError` or `None` |
 
 ### Validation flow
 
@@ -55,7 +55,7 @@ uv run pytest
 | 1 | Form iterates through declared fields |
 | 2 | Each field runs `to_python()`, default handling, built-in checks, and custom validators |
 | 3 | `cleaned_data` is filled with valid field values |
-| 4 | If no field-level errors exist, `form_validators` are executed |
+| 4 | If no field-level errors exist, `crossfield_validators` are executed |
 | 5 | Cross-field errors are stored under `errors["__all__"]` |
 
 ## Fields
@@ -190,7 +190,7 @@ support_note = String(
 For membership checks, prefer `InList(values, should_be_in=True/False)`.
 `NotInList` remains available as a compatibility wrapper.
 
-### Cross-field validators (`Formf.formvalidators`)
+### Cross-field validators (`Formf.crossfieldvalidators`)
 
 | Validator | Meaning | Error code |
 |---|---|---|
@@ -218,7 +218,7 @@ class UserForm(Form):
 ```python
 from Formf import Form
 from Formf.fields import String
-from Formf.formvalidators import Equals, BeforeDate
+from Formf.crossfieldvalidators import Equals, BeforeDate
 
 
 class RegisterForm(Form):
@@ -227,7 +227,7 @@ class RegisterForm(Form):
     start_date = String()
     end_date = String()
 
-    form_validators = [
+    crossfield_validators = [
         Equals("password", "password_repeat"),
         BeforeDate("start_date", "end_date"),
     ]
@@ -292,7 +292,7 @@ schema = MyForm({}).to_schema()
 | `form` | Form class name |
 | `version` | Schema version (`"1.0"`) |
 | `fields` | Field map with type/options/validators |
-| `form_validators` | Cross-field validator list |
+| `crossfield_validators` | Cross-field validator list |
 | `errors_schema` | Contract for error payloads (`__all__` for form errors) |
 
 ### Field schema shape
@@ -335,7 +335,7 @@ Each field contains:
       "validators": [{"name": "MinLength", "params": {"length": 8}}]
     }
   },
-  "form_validators": [
+  "crossfield_validators": [
     {"name": "Equals", "params": {"field1": "password", "field2": "password_repeat"}}
   ],
   "errors_schema": {
@@ -361,14 +361,14 @@ pytest
 Run cross-field tests only:
 
 ```bash
-pytest src/Formf/Core/Tests/Formvalidators
+pytest src/Formf/Core/Tests/Crossfieldvalidators
 ```
 
 ## Current Status
 
 - Field validation is implemented
-- Cross-field validation is implemented via `form_validators`
-- Basic tests for field and formvalidators are in place
+- Cross-field validation is implemented via `crossfield_validators`
+- Basic tests for field and crossfieldvalidators are in place
 - API is still evolving
 
 ## Contributing

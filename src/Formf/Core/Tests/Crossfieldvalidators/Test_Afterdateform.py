@@ -1,14 +1,14 @@
 import pytest
 from Formf.Core.Form import Form
 from Formf.fields.String import String
-from Formf.formvalidators import AfterDate
+from Formf.crossfieldvalidators import AfterDate
 
 
 def test_form_afterdate_validator_rejects_mismatch():
     class RegisterForm(Form):
         Date1 = String()
         Date2 = String()
-        form_validators = [AfterDate("Date1", "Date2")]
+        crossfield_validators = [AfterDate("Date1", "Date2")]
 
     form = RegisterForm({"Date1": "09.01.2020", "Date2": "10.01.2020"})
 
@@ -21,7 +21,7 @@ def test_form_afterdate_validator_accepts_match():
     class RegisterForm(Form):
         Date1 = String()
         Date2 = String()
-        form_validators = [AfterDate("Date1", "Date2")]
+        crossfield_validators = [AfterDate("Date1", "Date2")]
 
     form = RegisterForm({"Date1": "10.01.2020", "Date2": "09.01.2020"})
 

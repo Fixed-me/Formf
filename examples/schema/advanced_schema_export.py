@@ -2,7 +2,7 @@ import json
 
 from Formf import Form
 from Formf.fields import String
-from Formf.formvalidators import Equals, BeforeDate
+from Formf.crossfieldvalidators import Equals, BeforeDate
 
 
 class RegisterForm(Form):
@@ -20,7 +20,7 @@ class RegisterForm(Form):
     start_date = String()
     end_date = String()
 
-    form_validators = [
+    crossfield_validators = [
         Equals("password", "password_repeat"),
         BeforeDate("start_date", "end_date"),
     ]

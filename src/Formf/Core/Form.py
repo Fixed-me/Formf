@@ -51,7 +51,7 @@ class Form(metaclass=FormMeta):
 
         # the Form is only valid if no error occurred
         if not self._errors:
-            self._run_form_validators()
+            self._run_crossfield_validators()
 
         return not self._errors
 
@@ -65,8 +65,8 @@ class Form(metaclass=FormMeta):
 
         return result
 
-    def _run_form_validators(self):
-        for validator in getattr(self, "form_validators", []):
+    def _run_crossfield_validators(self):
+        for validator in getattr(self, "crossfield_validators", []):
             error = validator(self)
             if error is not None:
                 self._errors.setdefault("__all__", []).append(error)
@@ -79,9 +79,9 @@ class Form(metaclass=FormMeta):
                 field_name: field.to_schema()
                 for field_name, field in self._fields.items()
             },
-            "form_validators": [
+            "crossfield_validators": [
                 Schema.serialize_validator(v)
-                for v in getattr(self, "form_validators", [])
+                for v in getattr(self, "crossfield_validators", [])
             ],
             "errors_schema": {
                 "field_error_shape": {
