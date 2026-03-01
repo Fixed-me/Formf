@@ -1,9 +1,11 @@
 # field.py
+from importlib.metadata import pass_none
+
 from Formf.Core.errors import ValidationError
 from Formf.Core.schema import Schema
 
 class Field:
-    def __init__(self, *, required: bool = True, requiredif = None, default=None, nullable: bool=True, blank: bool =False, validators=None):
+    def __init__(self, *, strict: bool=False, required: bool = True, requiredif = None, default=None, nullable: bool=True, blank: bool =False, validators=None):
         self.required = False if requiredif is not None or blank else required
         self.requiredif = requiredif
         self.default = default
@@ -11,6 +13,7 @@ class Field:
         self.blank = blank
         self.validators = validators or []
         self.name = None
+        self.strict = strict
 
 
     def _apply_default(self, value, form=None):
@@ -179,6 +182,7 @@ class Field:
     def to_schema(self):
         return {
             "type": self.__class__.__name__.lower(),
+            "strict": self.strict,
             "required": self.required,
             "requiredif": Schema.serialize_requiredif(self.requiredif),
             "nullable": self.nullable,

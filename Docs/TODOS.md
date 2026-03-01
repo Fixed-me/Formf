@@ -2,7 +2,7 @@
 
 * ~~schema export for frontend frameworks~~
 
-* strict vs lenient parsing modes
+* ~~strict vs lenient parsing modes~~
 
 * Multilingual error messages
 

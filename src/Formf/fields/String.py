@@ -2,7 +2,7 @@ from Formf.Core.Field import Field
 from Formf.Core.errors import ValidationError
 
 class String(Field):
-    def __init__(self, *, required: bool = True, requiredif =None, nullable: bool=True, blank: bool =False, default=None, minlength: int = None, maxlength: int =None, validators=None):
+    def __init__(self, *, strict: bool=False, required: bool = True, requiredif =None, nullable: bool=True, blank: bool =False, default=None, minlength: int = None, maxlength: int =None, validators=None):
         from Formf.validators.MaxLength import MaxLength
         from Formf.validators.MinLength import MinLength
         validator = []
@@ -16,12 +16,31 @@ class String(Field):
             for v in validators:
                 validator.append(v)
 
-        super().__init__(required=required, nullable=nullable, blank=blank, requiredif=requiredif, default=default, validators=validator)
+        self.minlength = minlength
+        self.maxlength = maxlength
+
+        super().__init__(strict=strict, required=required, nullable=nullable, blank=blank, requiredif=requiredif, default=default, validators=validator)
 
     # validators would return an "actual" Error if it isn't the Correct Type
     def to_python(self, value):
-        if value is None or value == "":
+        if value in (None, ""):
             return None
-        if not isinstance(value, str):
-            return ValidationError("type", "Expected string", value)
-        return value
+
+        # Str
+        if isinstance(value, str):
+            return value
+
+        if self.strict:
+            raise ValidationError("type", "Expected string", value)
+
+        # Lenient Mode
+        try:
+            return str(value)
+        except Exception:
+            raise ValidationError("type", "Expected string", value)
+
+    def to_schema(self):
+        schema = super().to_schema()
+        schema["minlength"] = self.minlength
+        schema["maxlength"] = self.maxlength
+        return schema

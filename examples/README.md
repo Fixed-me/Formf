@@ -18,10 +18,10 @@ This folder contains runnable examples for common and advanced usage.
 From the project root:
 
 ```bash
-python Docs/examples/fields/string_field.py
-python Docs/examples/validators/general_validators.py
-python Docs/examples/formvalidators/equals_formvalidator.py
-python Docs/examples/standardvalidators/requiredif_dict_and_list.py
+PYTHONPATH=src python3 examples/fields/string_field.py
+PYTHONPATH=src python3 examples/validators/general_validators.py
+PYTHONPATH=src python3 examples/formvalidators/equals_formvalidator.py
+PYTHONPATH=src python3 examples/standardvalidators/requiredif_dict_and_list.py
 ```
 
 ## Notes

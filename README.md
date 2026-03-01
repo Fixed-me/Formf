@@ -77,6 +77,7 @@ These options are available on all fields:
 
 | Option | Default | Meaning |
 |---|---|---|
+| `strict` | `False` | strict type parsing (when supported by the field) |
 | `required` | `True` | field must be present |
 | `requiredif` | `None` | field becomes required when condition matches |
 | `nullable` | `True` | allow `None` |
@@ -93,7 +94,37 @@ These options are available on all fields:
 | `Float` | `minvalue`, `maxvalue` |
 | `Date` | `dateformat`, `before`, `after` |
 | `Bool` | `value` |
-| `List` | `inlist`, `notinlist` |
+| `List` | `listvalues`, `must_be_in`, `item_field` |
+
+### Strict vs Lenient conversion (`to_python`)
+
+| Field | Strict mode (`strict=True`) | Lenient mode (`strict=False`) |
+|---|---|---|
+| `String` | only accepts `str` | non-string values are converted with `str(value)` |
+| `Integer` | only accepts `int` | accepts `float` and numeric strings (`"42"`) |
+| `Float` | only accepts `float` | accepts `int` and numeric strings (`"3.14"`) |
+| `Date` | accepts `datetime` or strict `%Y-%m-%d` string | accepts `datetime` or several common string date formats |
+| `List` | only accepts `list` | also accepts `tuple` and `set` (converted to `list`) |
+| `Bool` | accepts bool input only | currently still requires bool input; string/int coercion is limited in current implementation |
+
+## List membership (simplified)
+
+Use one list plus one mode flag:
+
+```python
+from Formf.fields import List
+
+# all items must be in the provided list
+allowed_tags = List(listvalues=["a", "b", "c"], must_be_in=True)
+
+# all items must NOT be in the provided list
+blocked_tags = List(listvalues=["x", "y"], must_be_in=False)
+```
+
+Legacy args are still accepted for compatibility:
+
+- `inlist=...` (same as `listvalues=..., must_be_in=True`)
+- `notinlist=...` (same as `listvalues=..., must_be_in=False`)
 
 ## `requiredif` (extended behavior)
 
@@ -150,11 +181,14 @@ support_note = String(
 
 | Group | Validators |
 |---|---|
-| General | `Equals`, `NotEquals`, `InList`, `NotInList`, `Choices`, `Pattern`, `Regex` |
+| General | `Equals`, `NotEquals`, `InList`, `Choices`, `Pattern`, `Regex` |
 | String | `MinLength`, `MaxLength`, `Lowercase`, `Uppercase`, `Email`, `Url` |
 | Number | `Min`, `Max` |
 | Bool | `Bool` |
 | Date | `Before`, `After`, `Dateformat` |
+
+For membership checks, prefer `InList(values, should_be_in=True/False)`.
+`NotInList` remains available as a compatibility wrapper.
 
 ### Cross-field validators (`Formf.formvalidators`)
 

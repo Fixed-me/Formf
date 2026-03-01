@@ -3,7 +3,7 @@ from Formf.Core.errors import ValidationError
 
 class Date(Field):
 
-    def __init__(self, *, required: bool=True, requiredif=None, blank: bool=False, nullable: bool=None, default=None, dateformat=None, before=None, after=None, validators=None):
+    def __init__(self, *, strict=None, required: bool=True, requiredif=None, blank: bool=False, nullable: bool=None, default=None, dateformat=None, before=None, after=None, validators=None):
         from Formf.validators import Dateformat
         from Formf.validators.BeforeDate import Before
         from Formf.validators.AfterDate import After
@@ -21,32 +21,56 @@ class Date(Field):
             for v in validators:
                 validator.append(v)
 
+        self.dateformat = dateformat
+        self.before = before
+        self.after = after
+
         # for the Field class to handel the Field validators
-        super().__init__(required=required, requiredif=requiredif, nullable=nullable, blank=blank, default=default , validators=validator)
+        super().__init__(strict=strict, required=required, requiredif=requiredif, nullable=nullable, blank=blank, default=default , validators=validator)
 
     # validators would return an "actual" Error if it isn't the Correct Type
 
     def to_python(self, value):
         from datetime import datetime
 
-        if value is None or value == "":
+        if value in (None, ""):
             return None
+
         if isinstance(value, datetime):
             return value
-        if isinstance(value, str):
-            # Possible Date formats
-            formats = [
-                "%Y-%m-%d",
-                "%d-%m-%Y",
-                "%m-%d-%Y",
-                "%Y/%m/%d",
-                "%d/%m/%Y",
-                "%m/%d/%Y",
-            ]
-            for token in sorted(formats, key=len, reverse=True):
-                try:
-                    datetime.strptime(value, token)
-                    return value
-                except ValueError:
-                    raise ValidationError("type", "invalid_date", value)
+
+        if not isinstance(value, str):
+            raise ValidationError("type", "invalid_date", value)
+
+        value = value.strip()
+
+        if self.strict:
+            try:
+                return datetime.strptime(value, "%Y-%m-%d")
+            except ValueError:
+                raise ValidationError("type", "invalid_date", value)
+
+        # lenient mode
+        formats = [
+            "%Y-%m-%d",
+            "%d-%m-%Y",
+            "%m-%d-%Y",
+            "%Y/%m/%d",
+            "%d/%m/%Y",
+            "%m/%d/%Y",
+        ]
+
+        for fmt in formats:
+            try:
+                return datetime.strptime(value, fmt)
+            except ValueError:
+                continue
+
         raise ValidationError("type", "invalid_date", value)
+
+    def to_schema(self):
+        schema = super().to_schema()
+        schema["dateformat"] = self.dateformat
+        schema["before"] = self.before
+        schema["after"] = self.after
+        return schema
