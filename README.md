@@ -243,6 +243,79 @@ Errors are exposed in a serializable dict format.
 
 `"__all__"` is reserved for form-level (cross-field) errors.
 
+## Schema Export
+
+Formf now provides a frontend-friendly schema export:
+
+```python
+schema = MyForm({}).to_schema()
+```
+
+### Export structure
+
+| Key | Description |
+|---|---|
+| `form` | Form class name |
+| `version` | Schema version (`"1.0"`) |
+| `fields` | Field map with type/options/validators |
+| `form_validators` | Cross-field validator list |
+| `errors_schema` | Contract for error payloads (`__all__` for form errors) |
+
+### Field schema shape
+
+Each field contains:
+
+- `type`
+- `required`
+- `requiredif`
+- `nullable`
+- `blank`
+- `default`
+- `validators` (`[{name, params}]`)
+
+### `requiredif` export notes
+
+- Tuple condition exports as:
+  - `{"type": "tuple", "field": "...", "expected": ...}`
+- Dict condition exports as:
+  - `{"type": "rule", "rule": {...}}`
+- List condition exports as:
+  - `{"type": "any", "conditions": [...]}`
+- Callable condition exports as:
+  - `{"type": "callable", "exportable": false, "name": "..."}`
+
+### Example output
+
+```python
+{
+  "form": "RegisterForm",
+  "version": "1.0",
+  "fields": {
+    "password": {
+      "type": "string",
+      "required": True,
+      "requiredif": None,
+      "nullable": True,
+      "blank": False,
+      "default": None,
+      "validators": [{"name": "MinLength", "params": {"length": 8}}]
+    }
+  },
+  "form_validators": [
+    {"name": "Equals", "params": {"field1": "password", "field2": "password_repeat"}}
+  ],
+  "errors_schema": {
+    "field_error_shape": {"code": "string", "message": "string|null", "meta": "object"},
+    "form_error_key": "__all__"
+  }
+}
+```
+
+Schema examples are available in:
+
+- `Docs/examples/schema/basic_schema_export.py`
+- `Docs/examples/schema/advanced_schema_export.py`
+
 ## Testing
 
 Run all tests:

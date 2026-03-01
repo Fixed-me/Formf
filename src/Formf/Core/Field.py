@@ -1,5 +1,6 @@
 # field.py
 from Formf.Core.errors import ValidationError
+from Formf.Core.schema import Schema
 
 class Field:
     def __init__(self, *, required: bool = True, requiredif = None, default=None, nullable: bool=True, blank: bool =False, validators=None):
@@ -174,3 +175,17 @@ class Field:
 
     def to_python(self, value):
         return value
+
+    def to_schema(self):
+        return {
+            "type": self.__class__.__name__.lower(),
+            "required": self.required,
+            "requiredif": Schema.serialize_requiredif(self.requiredif),
+            "nullable": self.nullable,
+            "blank": self.blank,
+            "default": Schema.serialize_value(self.default),
+            "validators": [
+                Schema.serialize_validator(v)
+                for v in self.validators
+            ],
+        }

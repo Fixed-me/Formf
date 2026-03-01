@@ -1,6 +1,6 @@
 * ~~cross-field validation layer → for now done~~ 
 
-* schema export for frontend frameworks
+* ~~schema export for frontend frameworks~~
 
 * strict vs lenient parsing modes
 

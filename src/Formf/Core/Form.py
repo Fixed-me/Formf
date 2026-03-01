@@ -1,5 +1,6 @@
 # form.py
 from Formf.Core.Field import Field
+from Formf.Core.schema import Schema
 
 class FormMeta(type):
     def __new__(cls, name, bases, attrs):
@@ -69,3 +70,25 @@ class Form(metaclass=FormMeta):
             error = validator(self)
             if error is not None:
                 self._errors.setdefault("__all__", []).append(error)
+
+    def to_schema(self):
+        return {
+            "form": self.__class__.__name__,
+            "version": "1.0",
+            "fields": {
+                field_name: field.to_schema()
+                for field_name, field in self._fields.items()
+            },
+            "form_validators": [
+                Schema.serialize_validator(v)
+                for v in getattr(self, "form_validators", [])
+            ],
+            "errors_schema": {
+                "field_error_shape": {
+                    "code": "string",
+                    "message": "string|null",
+                    "meta": "object",
+                },
+                "form_error_key": "__all__",
+            },
+        }

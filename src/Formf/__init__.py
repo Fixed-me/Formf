@@ -1,4 +1,4 @@
-from .Core.Form import Form
+from .Core import Form
 
 __all__ = [
     "Form"
