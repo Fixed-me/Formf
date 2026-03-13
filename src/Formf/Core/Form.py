@@ -1,6 +1,8 @@
 # form.py
 from Formf.Core.Field import Field
 from Formf.Core.schema import Schema
+import json
+import os
 
 class FormMeta(type):
     def __new__(cls, name, bases, attrs):
@@ -37,6 +39,7 @@ class Form(metaclass=FormMeta):
         self.cleaned_data = {}
 
     def is_valid(self):
+
         # validate all fields separately from each other
         for name, field in self._fields.items():
             raw = self.data.get(name)
@@ -55,13 +58,37 @@ class Form(metaclass=FormMeta):
 
         return not self._errors
 
-    @property
-    def errors(self):
+    @staticmethod
+    def resolve_messages(code, language):
+
+        base_dir = os.path.dirname(__file__)
+
+        file = f"{language}.json"
+        path = os.path.join(base_dir, "MESSAGE_TEMPLATES", file)
+
+        with open(path, encoding="utf-8") as msg:
+            template = json.load(msg)
+
+        data = template[code]
+
+        return data
+
+    def errors(self, messages=True, language="en"):
+
         # change Error objects in a serializable format
         result = {}
 
         for field_name, errors in self._errors.items():
-            result[field_name] = [err.to_dict() for err in errors]
+
+            result[field_name] = []
+
+            for err in errors:
+                err_dict = err.to_dict()
+
+                if messages:
+                    err_dict["message"] = self.resolve_messages(err.code, language)
+
+                result[field_name].append(err_dict)
 
         return result
 
@@ -86,8 +113,10 @@ class Form(metaclass=FormMeta):
             "errors_schema": {
                 "field_error_shape": {
                     "code": "string",
-                    "message": "string|null",
                     "meta": "object",
+                    "value": "object",
+                    "message": "string|null",
+
                 },
                 "form_error_key": "__all__",
             },

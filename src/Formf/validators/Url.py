@@ -9,7 +9,7 @@ class Url:
         if not self.pattern.match(value):
             return ValidationError(
                 code="Url",
-                message="Invalid Url",
-                meta={"Pattern": self.pattern}
+                meta={"Pattern": self.pattern},
+                value={"Input": value}
             )
         return None

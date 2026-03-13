@@ -1,15 +1,15 @@
 # errors.py
 class ValidationError(Exception):
-    def __init__(self, code: str, message: str = None, meta=None):
+    def __init__(self, code: str, value = None, meta=None):
         self.code = code
-        self.message = message
+        self.value = value
         self.meta = meta or {}
 
     def to_dict(self):
         return {
             "code": self.code,
-            "message": self.message,
-            "meta": self.meta
+            "meta": self.meta,
+            "value": self.value
         }
     
     def __repr__(self):

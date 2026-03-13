@@ -8,7 +8,7 @@ class Lowercase(object):
         if not value == value.lower():
             return ValidationError(
                 code="Lowercase",
-                message=f"The value is not lowercase",
-                meta={"Lowercase": self.lowercase}
+                meta={"Lowercase": self.lowercase},#
+                value={"Input": value}
             )
         return None

@@ -10,7 +10,6 @@ class BeforeDate:
         if form.cleaned_data.get(self.field1) > form.cleaned_data.get(self.field2):
             return ValidationError(
                 code="BeforeDateForm",
-                message=f"Startdate should be before Enddate ",
                 meta={'Startdate': self.field1, 'Enddate': self.field2},
             )
         return None

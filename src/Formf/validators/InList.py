@@ -12,8 +12,7 @@ class InList:
             invalid = [v for v in values if v not in self.list]
             if invalid:
                 return ValidationError(
-                    code="InList",
-                    message="List not in origin List",
+                    code="In_List",
                     meta={"List": self.list, "Invalid": invalid}
                 )
         else:
@@ -21,16 +20,16 @@ class InList:
             if blocked:
                 # keep historical error code for backward compatibility
                 return ValidationError(
-                    code="NoInList",
-                    message="List in origin List",
-                    meta={"List": self.list, "Blocked": blocked}
+                    code="No_InList",
+                    meta={"List": self.list, "Blocked": blocked},
+                    value={"Input": value}
                 )
 
         return None
 
     def to_schema(self):
         return {
-            "name": "InList",
+            "name": "In_List",
             "params": {
                 "list": sorted(self.list, key=str),
                 "should_be_in": self.should_be_in,

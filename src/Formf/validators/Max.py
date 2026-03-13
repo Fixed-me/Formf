@@ -8,7 +8,7 @@ class Max:
         if value > self.maximum:
             return ValidationError(
                 code="Max",
-                message="Value is too large",
-                meta={"Max": self.maximum}
+                meta={"Max": self.maximum},
+                value={"Input": value}
             )
         return None

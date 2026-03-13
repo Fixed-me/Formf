@@ -10,7 +10,7 @@ class Equals:
         if value != self.equals:
             return ValidationError(
                 code="Equals",
-                message="Values do not match",
-                meta={"Equals": self.equals}
+                meta={"Equals": self.equals},
+                value={"Input": value}
             )
         return None

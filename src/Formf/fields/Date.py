@@ -40,15 +40,15 @@ class Date(Field):
             return value
 
         if not isinstance(value, str):
-            raise ValidationError("type", "invalid_date", value)
+            raise ValidationError("type_date", meta={"date": value})
 
         value = value.strip()
 
         if self.strict:
             try:
-                return datetime.strptime(value, "%Y-%m-%d")
+                return str(datetime.strptime(value, "%Y-%m-%d").date())
             except ValueError:
-                raise ValidationError("type", "invalid_date", value)
+                raise ValidationError("type_date", meta={"date": value})
 
         # lenient mode
         formats = [
@@ -62,11 +62,12 @@ class Date(Field):
 
         for fmt in formats:
             try:
-                return datetime.strptime(value, fmt)
+                return str(datetime.strptime(value, fmt).date())
             except ValueError:
                 continue
 
-        raise ValidationError("type", "invalid_date", value)
+        raise ValidationError("type_date", meta={"date": value})
+
 
     def to_schema(self):
         schema = super().to_schema()

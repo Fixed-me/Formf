@@ -10,7 +10,7 @@ class List(Field):
         validator = []
 
         if listvalues is not None and (inlist is not None or notinlist is not None):
-            raise ValueError("Use either listvalues/must_be_in or legacy inlist/notinlist, not both")
+            raise ValueError("Please use either listvalues/must_be_in or legacy inlist/notinlist, not both")
 
         membership_values = listvalues
         membership_should_be_in = must_be_in
@@ -50,13 +50,13 @@ class List(Field):
             return value
 
         if self.strict:
-            raise ValidationError("type", "invalid_list", value)
+            raise ValidationError("type_list", meta={"list": value})
 
         # Lenient Mode
         if isinstance(value, (tuple, set)):
             return list(value)
 
-        raise ValidationError("type", "invalid_list", value)
+        raise ValidationError("type_list", meta={"list": value})
 
     def to_schema(self):
         schema = super().to_schema()

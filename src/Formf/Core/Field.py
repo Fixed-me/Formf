@@ -1,6 +1,4 @@
 # field.py
-from importlib.metadata import pass_none
-
 from Formf.Core.errors import ValidationError
 from Formf.Core.schema import Schema
 
@@ -26,8 +24,8 @@ class Field:
                 if self.default is None:
                     return ValidationError(
                         "default",
-                        "no default value provided",
-                        meta={"Default": self.default}
+                        meta={"Default": self.default},
+                        value={"Input": value}
                     )
             # Fallback default
             value = self.default
@@ -99,8 +97,8 @@ class Field:
         if self.required and (value is None):
             return ValidationError(
                 "required",
-                "This field is required",
-                meta={"Required": self.required}
+                meta={"Required": self.required},
+                value={"Input": value}
 
             )
 
@@ -111,18 +109,17 @@ class Field:
         if not self.nullable and (value is None):
             return ValidationError(
                 code="nullable",
-                message="This Field may not be empty",
-                meta={"Required": self.required}
+                meta={"nullable": self.nullable}
             )
         return False
-
 
     
     def _validate_blank(self, value):
         if self.blank and isinstance(value, str) and value == "":
             return ValidationError(
                 "blank",
-                "This Field may not be blank"
+                meta={"blank": self.blank},
+                value={"Input": value}
             )
         return False
 
@@ -131,8 +128,8 @@ class Field:
         if self.requiredif is not None and self._requiredif_applies(form) and value is None:
             return ValidationError(
                 code="requiredif",
-                message="This field is required due to requiredif condition",
-                meta={"requiredif": self.requiredif}
+                meta={"requiredif": self.requiredif},
+                value={"Input": value}
             )
         return False
 

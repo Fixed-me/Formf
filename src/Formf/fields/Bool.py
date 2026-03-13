@@ -3,7 +3,7 @@ from Formf.Core.errors import ValidationError
 
 class Bool(Field):
 
-    def __init__(self, *, strict=None ,required: bool=True, requiredif=None, blank: bool=False, nullable: bool=True, default=None, value: bool=True, validators=None):
+    def __init__(self, *, strict=None ,required: bool=True, requiredif=None, blank: bool=False, nullable: bool=True, default=None, value: bool=None, validators=None):
         from Formf.validators.Bool import Bool
         validator = []
 
@@ -24,7 +24,7 @@ class Bool(Field):
         if value is None or value == "":
             return None
         if not isinstance(value, bool):
-            raise ValidationError("type", "invalid_bool")
+            raise ValidationError("type_bool", meta={'Field': value})
 
         if not self.strict:
             if isinstance(value, str):

@@ -10,7 +10,7 @@ class Uppercase:
         if not value == value.upper():
             return ValidationError(
                 code="Uppercase",
-                message=f"The Value is not uppercase.",
-                meta={"Uppercase": self.uppercase}
+                meta={"Uppercase": self.uppercase},
+                value={"Input": value}
             )
         return None

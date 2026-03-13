@@ -8,7 +8,7 @@ class Bool:
         if self.bool != value:
             return ValidationError(
                 code="Bool",
-                message="Bool is not expected value",
-                meta={"Bool": self.bool}
+                meta={"Bool": self.bool},
+                value={"Input": value}
             )
         return None

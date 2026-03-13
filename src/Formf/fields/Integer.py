@@ -32,7 +32,7 @@ class Integer(Field):
             return value
 
         if self.strict:
-            raise ValidationError("type", "invalid_integer", value)
+            raise ValidationError("type_integer", meta={"integer": value})
 
         # Lenient Mode
         if isinstance(value, float):
@@ -44,7 +44,7 @@ class Integer(Field):
             except ValueError:
                 pass
 
-        raise ValidationError("type", "invalid_integer", value)
+        raise ValidationError("type_integer", meta={"integer": value})
 
     def to_schema(self):
         schema = super().to_schema()

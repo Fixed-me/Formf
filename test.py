@@ -14,4 +14,4 @@ data = {
 form = Registerform(data)
 
 print(form.is_valid())
-print(form.errors)
+print(form.errors(messages=False))

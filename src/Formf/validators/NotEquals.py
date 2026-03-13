@@ -9,8 +9,8 @@ class NotEquals:
         
         if not value != self.equals:
             return ValidationError(
-                code="NotEquals",
-                message="Values match but should not match",
-                meta=self.equals
+                code="Not_Equals",
+                meta={"Not_Equals": self.equals},
+                value={"Input": value}
             )
         return None

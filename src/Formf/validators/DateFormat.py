@@ -13,9 +13,9 @@ class Dateformat:
             return None
         except ValueError:
             return ValidationError(
-                code="Dateformat",
-                message="Value has not the expected format",
+                code="dateformat",
                 meta={"format": self.dateformat},
+                value={"Input": value}
             )
 
     @staticmethod

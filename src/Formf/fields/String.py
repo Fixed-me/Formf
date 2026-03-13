@@ -31,13 +31,13 @@ class String(Field):
             return value
 
         if self.strict:
-            raise ValidationError("type", "Expected string", value)
+            raise ValidationError("type_String", meta={"String": value})
 
         # Lenient Mode
         try:
             return str(value)
         except Exception:
-            raise ValidationError("type", "Expected string", value)
+            raise ValidationError("type_String", meta={"String": value})
 
     def to_schema(self):
         schema = super().to_schema()

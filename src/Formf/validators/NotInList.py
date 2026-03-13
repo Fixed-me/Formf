@@ -10,7 +10,7 @@ class NotInList:
 
     def to_schema(self):
         return {
-            "name": "NotInList",
+            "name": "Not_InList",
             "params": {
                 "list": sorted(self.list, key=str),
                 "should_be_in": False,

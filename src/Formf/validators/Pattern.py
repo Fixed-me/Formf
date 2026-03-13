@@ -9,16 +9,22 @@ class Pattern:
         "email": r"^[^@]+@[^@]+\.[^@]+$"
     }
     def __init__(self, pattern):
-        if pattern not in self.REGEX:
-            raise ValueError(code="Pattern", message="Unknown pattern {pattern}", meta={"Pattern": self.REGEX})
+        self.pattern_origin = pattern
         self.pattern = self.REGEX[pattern]
     
     def __call__(self, value):
-        
+
+        if self.pattern_origin not in self.REGEX:
+            return ValidationError(
+                code="Pattern",
+                meta={"Pattern": self.REGEX},
+                value={"Input": value}
+            )
+
         if not re.fullmatch(self.pattern, value):
             return ValidationError(
                 code="Pattern",
-                message="Expected other pattern",
-                meta={"Pattern": self.pattern}
+                meta={"Pattern": self.pattern},
+                value = {"Input": value}
             )
         return None

@@ -5,7 +5,7 @@ class Email:
         if "@" not in value:
             return ValidationError(
                 code="Email",
-                message="@ not in Email",
-                meta={"Email": value}
+                meta={"Email": value},
+                value={"Input": value}
             )
         return None

@@ -256,27 +256,43 @@ form.errors
 
 Errors are exposed in a serializable dict format.
 
+messages can now be disabled e.g
+```python
+form.errors(message=False)
+```
+the default Value is "True"
 ```python
 {
     "field_name": [
         {
             "code": "validator_name",
-            "message": "Error message",
-            "meta": {"key": "value"}
+            "meta": {"key": "value"},
+            "value": "value",
+            "messages": "message"
         }
     ],
     "__all__": [
         {
             "code": "cross_field_error",
-            "message": "Cross-field error message",
-            "meta": {}
+            "meta": {},
+            "value": "value",
+            "message": "message"
         }
     ]
 }
 ```
 
 `"__all__"` is reserved for form-level (cross-field) errors.
+## i18N
+Formf now proviedes a little methode to change the language of the Errormessages
+```
+print(form.errors(language="en"))
+```
+The default language is english("en")
+at the moment following language supports are included:
 
+- English(language="en")
+- German(language="de")
 ## Schema Export
 
 Formf now provides a frontend-friendly schema export:

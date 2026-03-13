@@ -13,9 +13,9 @@ class After:
         value_date = datetime.strptime(value, self.date_format)
         if not value_date > self.after_datetime:
             return ValidationError(
-                code="After datetime",
-                message=f"The Date is not after the Expected date",
-                meta={"After": self.after}
+                code="After_datetime",
+                meta={"After": self.after},
+                value={"Input": value}
             )
         return None
 

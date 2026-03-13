@@ -8,7 +8,7 @@ class Min:
         if value < self.minimum:
             return ValidationError(
                 code="Min",
-                message="Value is to small",
-                meta={"Min": self.minimum}
+                meta={"Min": self.minimum},
+                value={"Input": value}
             )
         return None

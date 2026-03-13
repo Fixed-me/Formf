@@ -10,7 +10,6 @@ class AfterDate:
         if form.cleaned_data.get(self.field1) < form.cleaned_data.get(self.field2):
             return ValidationError(
                 code="AfterDateForm",
-                message=f"Startdate should be after Enddate ",
-                meta={'Startdate': self.field1, 'Enddate': self.field2},
+                meta={"Startdate": self.field1, "Enddate": self.field2}
             )
         return None

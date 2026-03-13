@@ -10,7 +10,6 @@ class Equals:
         if form.cleaned_data.get(self.field1) != form.cleaned_data.get(self.field2):
             return ValidationError(
                 code="Equalsform",
-                message=f"The given fields should be equal",
                 meta={'Field1': self.field1, 'Field2': self.field2},
             )
         return None

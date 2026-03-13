@@ -8,8 +8,8 @@ class Regex:
     def __call__(self, value):
         if not self.regex.match(value):
             return ValidationError(
-                code="Regex", 
-                message="Invalid Format",
-                meta={"Format": self.regex}
+                code="Regex",
+                meta={"Format": self.regex},
+                value={"Input": value}
             )
         return None

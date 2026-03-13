@@ -7,8 +7,8 @@ class MinLength:
     def __call__(self, value):
         if len(value) < self.length:
             return ValidationError(
-                code="Min-length",
-                message="String is to short",
-                meta={"min": self.length}
+                code="Min_length",
+                meta={"Min_length": self.length},
+                value={"Input": value}
             )
         return None
