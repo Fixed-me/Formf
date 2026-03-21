@@ -1,3 +1,5 @@
+from test import messages
+
 # Formf
 
 **Work in Progress**  
@@ -256,11 +258,8 @@ form.errors
 
 Errors are exposed in a serializable dict format.
 
-messages can now be disabled e.g
-```python
-form.errors(message=False)
-```
-the default Value is "True"
+
+
 ```python
 {
     "field_name": [
@@ -283,6 +282,20 @@ the default Value is "True"
 ```
 
 `"__all__"` is reserved for form-level (cross-field) errors.
+- default messages can now be disabled e.g
+```python
+form.errors(message=False)
+```
+- the default Value is "True"
+- you can also set a message for an error
+```python
+messages = {
+  "code": "custom message"
+}
+
+print(form.errors(messages=messages))
+```
+
 ## i18N
 Formf now proviedes a little methode to change the language of the Errormessages
 ```

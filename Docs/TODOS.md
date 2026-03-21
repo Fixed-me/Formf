@@ -1,10 +1,10 @@
-* ~~cross-field validation layer → for now done~~ 
+* cross-field validation layer → for now done 
 
-* ~~schema export for frontend frameworks~~
+* schema export for frontend frameworks
 
-* ~~strict vs lenient parsing modes~~
+* strict vs lenient parsing modes
 
-* Multilingual error messages
+* multilingual error messages
 
 * Custom error messages per validator
 

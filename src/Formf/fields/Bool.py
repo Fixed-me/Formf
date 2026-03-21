@@ -3,7 +3,7 @@ from Formf.Core.errors import ValidationError
 
 class Bool(Field):
 
-    def __init__(self, *, strict=None ,required: bool=True, requiredif=None, blank: bool=False, nullable: bool=True, default=None, value: bool=None, validators=None):
+    def __init__(self, *, strict=None , required: bool=True, requiredif=None, blank: bool=False, nullable: bool=True, default=None, value: bool=None, validators=None):
         from Formf.validators.Bool import Bool
         validator = []
 

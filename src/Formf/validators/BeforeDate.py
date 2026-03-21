@@ -10,9 +10,9 @@ class Before:
 
     def __call__(self, value):
         
-        value = datetime.strptime(value, self.date_format)
+        value_date = datetime.strptime(value, self.date_format)
 
-        if not value < self.before_datetime:
+        if not value_date < self.before_datetime:
             return ValidationError(
                 code="Before_datetime",
                 meta={"Before": self.before},

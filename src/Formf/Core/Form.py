@@ -73,10 +73,11 @@ class Form(metaclass=FormMeta):
 
         return data
 
-    def errors(self, messages=True, language="en"):
+    def errors(self, default_msg=True, language="en", messages=None):
 
         # change Error objects in a serializable format
         result = {}
+        messages = messages or {}
 
         for field_name, errors in self._errors.items():
 
@@ -85,7 +86,11 @@ class Form(metaclass=FormMeta):
             for err in errors:
                 err_dict = err.to_dict()
 
-                if messages:
+                if messages not in (None, {}) and messages[err.code]:
+                    default_msg = False
+                    err_dict["message"] = messages[err.code]
+
+                if default_msg:
                     err_dict["message"] = self.resolve_messages(err.code, language)
 
                 result[field_name].append(err_dict)
