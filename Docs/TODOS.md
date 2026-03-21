@@ -12,8 +12,6 @@
 
 * Async validation
 
-* Schema export (e.g. for frontend usage)
-
 * some JS/TS Extension
 
 * Pluggable Field System
@@ -24,7 +22,7 @@
 
 * Script Typing Support(PEP 484)
 
-* Schema + Version + Frontend bridge
+* Version control
 
 * Schema Hash (Test changes)
 

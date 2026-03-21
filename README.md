@@ -1,4 +1,4 @@
-from test import messages
+from email.policy import defaultfrom test import messages
 
 # Formf
 
@@ -284,7 +284,7 @@ Errors are exposed in a serializable dict format.
 `"__all__"` is reserved for form-level (cross-field) errors.
 - default messages can now be disabled e.g
 ```python
-form.errors(message=False)
+form.errors(default_messages=False)
 ```
 - the default Value is "True"
 - you can also set a message for an error
