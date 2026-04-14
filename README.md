@@ -3,15 +3,6 @@
 **Work in Progress**  
 APIs, validation behavior, and internal structures may change.
 
-## Overview
-
-Formf is a modular Python form validation framework.
-It is built around:
-
-- `Form` for orchestration
-- `Field` for type conversion + field-level rules
-- `validators` for reusable single-field checks
-- `crossfieldvalidators` for cross-field checks
 
 ## Installation
 
@@ -47,16 +38,6 @@ uv run pytest
 | `Field` | Convert raw value, run field validators | single value | converted value or field errors |
 | `validator` | Validate one field rule | value | `ValidationError` or `None` |
 | `crossfieldvalidator` | Validate relationships between fields | form instance | `ValidationError` or `None` |
-
-### Validation flow
-
-| Step | What happens |
-|---|---|
-| 1 | Form iterates through declared fields |
-| 2 | Each field runs `to_python()`, default handling, built-in checks, and custom validators |
-| 3 | `cleaned_data` is filled with valid field values |
-| 4 | If no field-level errors exist, `crossfield_validators` are executed |
-| 5 | Cross-field errors are stored under `errors["__all__"]` |
 
 ## Fields
 
@@ -377,26 +358,6 @@ Schema examples are available in:
 - `Docs/examples/schema/basic_schema_export.py`
 - `Docs/examples/schema/advanced_schema_export.py`
 
-## Testing
-
-Run all tests:
-
-```bash
-pytest
-```
-
-Run cross-field tests only:
-
-```bash
-pytest src/Formf/Core/Tests/Crossfieldvalidators
-```
-
-## Current Status
-
-- Field validation is implemented
-- Cross-field validation is implemented via `crossfield_validators`
-- Basic tests for field and crossfieldvalidators are in place
-- API is still evolving
 
 ## Contributing
 
