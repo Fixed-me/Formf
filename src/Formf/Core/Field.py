@@ -1,6 +1,7 @@
 # field.py
 from Formf.Core.errors import ValidationError
 from Formf.Core.schema import Schema
+from Formf.Core.helper import run_validator
 
 class Field:
     def __init__(self, *, strict: bool=False, required: bool = True, requiredif = None, default=None, nullable: bool=True, blank: bool =False, validators=None):
@@ -133,7 +134,7 @@ class Field:
             )
         return False
 
-    def validate(self, value, form=None):  # Field validation
+    async def validate(self, value, form=None):  # Field validation
         errors = []
 
         for fn in (
@@ -149,14 +150,15 @@ class Field:
         if e:
             errors.append(e)
 
+        # append returning Errors
         for v in self.validators:
-            e = v(value)
+            e = await run_validator(v, value)
             if e:
                 errors.append(e)
 
         return errors
 
-    def clean(self, raw, form=None):
+    async def clean(self, raw, form=None):
 
         try:
             value = self.to_python(raw)
@@ -167,7 +169,7 @@ class Field:
         if isinstance(value, ValidationError):
             return None, [value]
 
-        errors = self.validate(value, form=form)
+        errors = await self.validate(value, form=form)
         if errors:
             return None, errors
 

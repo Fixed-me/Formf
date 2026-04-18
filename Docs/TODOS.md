@@ -1,18 +1,16 @@
 * cross-field validation layer → for now done 
 
-* schema export for frontend frameworks
+* ~~schema export for frontend frameworks~~
 
-* strict vs lenient parsing modes
+* ~~strict vs lenient parsing modes~~
 
-* multilingual error messages
+* ~~multilingual error messages~~
 
-* Custom error messages per validator
+* ~~Custom error messages per validator~~
 
-* JSON / dict export of validation errors
+* ~~JSON / dict export of validation errors~~
 
-* Async validation
-
-* some JS/TS Extension
+* ~~Async validation~~
 
 * Pluggable Field System
 
@@ -35,5 +33,7 @@
 * Input Sanitization Layer
 
 * Debug Mode
+
+* some JS/TS Extension
 
 * CLI

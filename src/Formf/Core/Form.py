@@ -1,6 +1,7 @@
 # form.py
 from Formf.Core.Field import Field
 from Formf.Core.schema import Schema
+import asyncio
 import json
 import os
 
@@ -38,14 +39,18 @@ class Form(metaclass=FormMeta):
         # save all validated data
         self.cleaned_data = {}
 
-    def is_valid(self):
+    async def is_valid_async(self):
+        tasks = []
 
         # validate all fields separately from each other
         for name, field in self._fields.items():
             raw = self.data.get(name)
+            tasks.append(self._process_field(name, field, raw))
 
-            # clean does Type conversion and validation
-            value, errs = field.clean(raw, form=self)
+        results = await asyncio.gather(*tasks)
+
+        # clean does Type conversion and validation
+        for name, value, errs in results:
 
             if errs:
                 self._errors.setdefault(name, []).extend(errs)
@@ -57,6 +62,14 @@ class Form(metaclass=FormMeta):
             self._run_crossfield_validators()
 
         return not self._errors
+
+    def is_valid(self):
+
+        return asyncio.run(self.is_valid_async())
+
+    async def _process_field(self, name, field, raw):
+        value, errors = await field.clean(raw)
+        return name, value, errors
 
     @staticmethod
     def resolve_messages(code, language):

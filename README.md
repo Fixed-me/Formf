@@ -88,6 +88,9 @@ These options are available on all fields:
 | `List` | only accepts `list` | also accepts `tuple` and `set` (converted to `list`) |
 | `Bool` | accepts bool input only | currently still requires bool input; string/int coercion is limited in current implementation |
 
+## Async validation
+The validation Internal works Asynchronous, so it's not needed to separately call it Asynchronous
+
 ## List membership (simplified)
 
 Use one list plus one mode flag:
@@ -353,16 +356,7 @@ Each field contains:
 }
 ```
 
-Schema examples are available in:
-
-- `Docs/examples/schema/basic_schema_export.py`
-- `Docs/examples/schema/advanced_schema_export.py`
-
-
 ## Contributing
 
 Pull requests, ideas, and feedback are welcome.
 
-## License
-
-MIT

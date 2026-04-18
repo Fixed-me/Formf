@@ -11,12 +11,7 @@ data = {
     "field2": True
 }
 
-messages = {
-    "After_datetime": "Jai",
-    "Bool": "Ja"
-}
-
 form = Registerform(data)
 
 print(form.is_valid())
-print(form.errors(messages=messages))
+print(form.errors())
