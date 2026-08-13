@@ -2,25 +2,42 @@
 from Formf.Core.errors import ValidationError
 from Formf.Core.schema import Schema
 from Formf.Core.helper import run_validator
+from Formf.validators.Required import Required
+from Formf.validators.Nullable import Nullable
+from Formf.validators.Blank import Blank
+from Formf.validators.RequiredIf import RequiredIf
 
 class Field:
+
+    validators = []
+
     def __init__(self, *, strict: bool=False, required: bool = True, requiredif = None, default=None, nullable: bool=True, blank: bool =False, validators=None):
         self.required = False if requiredif is not None or blank else required
         self.requiredif = requiredif
         self.default = default
         self.nullable = nullable
         self.blank = blank
-        self.validators = validators or []
         self.name = None
         self.strict = strict
 
+        self.validators = [
+            Required(self.required),
+            Nullable(self.nullable),
+            Blank(self.blank),
+            RequiredIf(self.requiredif)
+        ]
+
+        self.validators.extend(self.__class__.validators)
+
+        if validators:
+            self.validators.extend(validators)
 
     def _apply_default(self, value, form=None):
 
-        # Inputs missing oder None
+        # Inputs missing or None
         if value is None:
             # Test if field is required
-            required_now = self.required or (self.requiredif is not None and self._requiredif_applies(form))
+            required_now = self.required or (self.requiredif is not None and RequiredIf._requiredif_applies(form))
             if required_now:
                 if self.default is None:
                     return ValidationError(
@@ -33,128 +50,13 @@ class Field:
 
         return value
 
-    def _field_is_filled(self, value):
-        return value not in (None, "")
-
-    def _get_other_value(self, form, field_name):
-        if form is None:
-            return None
-        return form.data.get(field_name)
-
-    def _evaluate_requiredif_condition(self, condition, form):
-        # backward compatible: ("other_field", True/False/<exact value>)
-        if isinstance(condition, tuple) and len(condition) == 2:
-            field_name, expected = condition
-            other_value = self._get_other_value(form, field_name)
-            if isinstance(expected, bool):
-                return self._field_is_filled(other_value) == expected
-            return other_value == expected
-
-        # callable support: lambda form -> bool
-        if callable(condition):
-            return bool(condition(form))
-
-        # dict support:
-        # {"field": "name", "not_empty": True}
-        # {"field": "status", "equals": "active"}
-        # {"fields": ["a", "b"], "is_empty": True, "mode": "any|all"}
-        if isinstance(condition, dict):
-            fields = condition.get("fields")
-            field_name = condition.get("field")
-
-            if fields is None and field_name is not None:
-                fields = [field_name]
-
-            if not fields:
-                return False
-
-            values = [self._get_other_value(form, name) for name in fields]
-            mode = condition.get("mode", "any")
-            aggregator = any if mode == "any" else all
-
-            if "equals" in condition:
-                target = condition["equals"]
-                return aggregator(v == target for v in values)
-
-            if condition.get("not_empty", False):
-                return aggregator(self._field_is_filled(v) for v in values)
-
-            if condition.get("is_empty", False):
-                return aggregator(not self._field_is_filled(v) for v in values)
-
-        return False
-
-    def _requiredif_applies(self, form=None):
-        if self.requiredif is None:
-            return False
-
-        # multiple conditions: any match means this field becomes required
-        if isinstance(self.requiredif, list):
-            return any(self._evaluate_requiredif_condition(c, form) for c in self.requiredif)
-
-        return self._evaluate_requiredif_condition(self.requiredif, form)
-
-    def _validate_required(self, value):
-        if self.required and (value is None):
-            return ValidationError(
-                "required",
-                meta={"Required": self.required},
-                value={"Input": value}
-
-            )
-
-        return False
-
-    def _validate_nullable(self, value):
-
-        if not self.nullable and (value is None):
-            return ValidationError(
-                code="nullable",
-                meta={"nullable": self.nullable}
-            )
-        return False
-
-    
-    def _validate_blank(self, value):
-        if self.blank and isinstance(value, str) and value == "":
-            return ValidationError(
-                "blank",
-                meta={"blank": self.blank},
-                value={"Input": value}
-            )
-        return False
-
-    def _validate_requiredif(self, value, form=None):
-
-        if self.requiredif is not None and self._requiredif_applies(form) and value is None:
-            return ValidationError(
-                code="requiredif",
-                meta={"requiredif": self.requiredif},
-                value={"Input": value}
-            )
-        return False
-
-    async def validate(self, value, form=None):  # Field validation
+    async def validate(self, value):  # Field validation
         errors = []
 
-        for fn in (
-                self._validate_required,
-                self._validate_nullable,
-                self._validate_blank,
-        ):
-            e = fn(value)
-            if e:
-                errors.append(e)
-
-        e = self._validate_requiredif(value, form=form)
-        if e:
-            errors.append(e)
-
-        # append returning Errors
-        for v in self.validators:
-            e = await run_validator(v, value)
-            if e:
-                errors.append(e)
+        for validator in self.validators:
+            error = await run_validator(validator, value)
+            if error:
+                errors.append(error)
 
         return errors
 
@@ -169,7 +71,7 @@ class Field:
         if isinstance(value, ValidationError):
             return None, [value]
 
-        errors = await self.validate(value, form=form)
+        errors = await self.validate(value)
         if errors:
             return None, errors
 

@@ -28,7 +28,7 @@ class Integer(Field):
             return None
 
         # Int
-        if isinstance(value, int):
+        if type(value) is int:
             return value
 
         if self.strict:

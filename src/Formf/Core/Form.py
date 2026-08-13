@@ -7,19 +7,14 @@ import os
 
 class FormMeta(type):
     def __new__(cls, name, bases, attrs):
-        # collect all fields that where created in the class
         fields = {}
 
-        # Extract all fields with the class Definition,
-        # to process them
         for key, value in list(attrs.items()):
             if isinstance(value, Field):
                 # Fieldname == Kwarg in class
                 value.name = key
                 fields[key] = value
 
-                # delete from attr prevents, the Field to
-                # exists as normal class
                 del attrs[key]
 
         # _fields to describe the Form
@@ -63,6 +58,7 @@ class Form(metaclass=FormMeta):
 
         return not self._errors
 
+    # for the user api
     def is_valid(self):
 
         return asyncio.run(self.is_valid_async())
@@ -99,7 +95,7 @@ class Form(metaclass=FormMeta):
             for err in errors:
                 err_dict = err.to_dict()
 
-                if messages not in (None, {}) and messages[err.code]:
+                if err.code in messages:
                     default_messages = False
                     err_dict["message"] = messages[err.code]
 

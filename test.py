@@ -1,15 +1,24 @@
-from Formf import Form
-from Formf.fields import Date, Bool
-from Formf.validators import After
-
-class Registerform(Form):
-    field1 = Date(validators=[After(after="1010-08-19")])
-    field2 = Bool(value=False)
+from Formf import Form, Field
+from Formf.Core import ValidationError
+from Formf.validators import Min
 
 data = {
-    "field1": "1010-08-19",
-    "field2": True
+    "field2": 9
 }
+
+class Integer(Field):
+
+    def to_python(self, value):
+        if value in (None, ""):
+            return None
+
+        if not type(value) is int:
+            raise ValidationError("type_integer", meta={"integer": value})
+
+        return value
+
+class Registerform(Form):
+    field2 = Integer()
 
 form = Registerform(data)
 
