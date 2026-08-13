@@ -12,7 +12,7 @@
 
 * ~~Async validation~~
 
-* Pluggable Field System
+* ~~Pluggable Field System~~
 
 * Field Dependencies Graph
 

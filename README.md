@@ -52,6 +52,68 @@ Available field types:
 | `Date` | parses date strings with supported formats |
 | `List` | value is cast to `list` |
 
+### Custom Fields
+
+To write ure own fields u must simply only define 
+
+1. when a value is valid and when not  
+```python
+from Formf.Core import Field
+from Formf.Core import ValidationError
+
+
+class CustomField(Field):
+  
+    def to_python(self, value):
+        
+        if value in (None, ""):
+            return None
+        
+        try:
+            return str(value)
+        except Exception:
+            raise ValidationError("type_String", meta={"String": value})
+```
+when an error should occur the ValidationError should be returned and if anythings fine the value should be returned
+
+2. which validators it should use
+```python
+from Formf.Core import Field
+from Formf.validators import Min
+
+
+class CustomField(Field):
+    
+    validators = [Min(10)]
+```
+but u can also just write it like with any other field and just define the valid values
+
+```python
+from Formf.Core import Form
+from Formf.Core import Field
+from Formf.Core import ValidationError
+from Formf.validators import MinLength
+
+class CustomField(Field):
+    
+  def to_python(self, value):
+        
+        if value in (None, ""):
+            return None
+        
+        try:
+            return str(value)
+        except Exception:
+            raise ValidationError("type_String", meta={"String": value})
+
+class CustomForm(Form):
+  username = CustomField(validators=MinLength(10))
+
+
+
+```
+
+
 ### Shared field options
 
 These options are available on all fields:
@@ -288,6 +350,9 @@ at the moment following language supports are included:
 
 - English(language="en")
 - German(language="de")
+
+## 
+
 ## Schema Export
 
 Formf now provides a frontend-friendly schema export:
