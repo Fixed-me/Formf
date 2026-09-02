@@ -1,8 +1,7 @@
 # Formf
 
-**Work in Progress**  
+**Work in Progress**
 APIs, validation behavior, and internal structures may change.
-
 
 ## Installation
 
@@ -18,8 +17,8 @@ pip install -e .
 
 Requirements:
 
-- Python 3.10+
-- `uv`
+* Python 3.10+
+* `uv`
 
 ```bash
 git clone https://github.com/Fixed-me/Formf.git
@@ -28,153 +27,81 @@ uv sync --extra dev
 uv run pytest
 ```
 
-## Core Concepts
+---
 
-### Form and Field at a glance
+# Core Concepts
 
-| Concept | Responsibility | Input | Output |
-|---|---|---|---|
-| `Form` | Collect fields, run validation, aggregate errors | `dict` data | `is_valid()`, `cleaned_data`, `errors` |
-| `Field` | Convert raw value, run field validators | single value | converted value or field errors |
-| `validator` | Validate one field rule | value | `ValidationError` or `None` |
-| `crossfieldvalidator` | Validate relationships between fields | form instance | `ValidationError` or `None` |
+## Form and Field at a glance
 
-## Fields
+| Concept               | Responsibility                                   | Input         | Output                                 |
+| --------------------- | ------------------------------------------------ | ------------- | -------------------------------------- |
+| `Form`                | Collect fields, run validation, aggregate errors | `dict` data   | `is_valid()`, `cleaned_data`, `errors` |
+| `Field`               | Convert raw value, run field validators          | single value  | converted value or field errors        |
+| `validator`           | Validate one field rule                          | value         | `ValidationError` or `None`            |
+| `crossfieldvalidator` | Validate relationships between fields            | form instance | `ValidationError` or `None`            |
 
-Available field types:
+## Async validation
 
-| Field | Type conversion |
-|---|---|
-| `String` | value must be `str` (empty becomes `None`) |
-| `Integer` | value is cast to `int` |
-| `Float` | value must be `float` |
-| `Bool` | value must be `bool` |
-| `Date` | parses date strings with supported formats |
-| `List` | value is cast to `list` |
+The internal validation process works asynchronously, so you do not need to call the validation process separately in an asynchronous way.
 
-### Custom Fields
+---
 
-To write ure own fields u must simply only define 
+# Fields
 
-1. when a value is valid and when not  
-```python
-from Formf.Core import Field
-from Formf.Core import ValidationError
+## Available field types
 
+| Field     | Type conversion                            |
+| --------- | ------------------------------------------ |
+| `String`  | value must be `str` (empty becomes `None`) |
+| `Integer` | value is cast to `int`                     |
+| `Float`   | value must be `float`                      |
+| `Bool`    | value must be `bool`                       |
+| `Date`    | parses date strings with supported formats |
+| `List`    | value is cast to `list`                    |
 
-class CustomField(Field):
-  
-    def to_python(self, value):
-        
-        if value in (None, ""):
-            return None
-        
-        try:
-            return str(value)
-        except Exception:
-            raise ValidationError("type_String", meta={"String": value})
-```
-when an error should occur the ValidationError should be returned and if anythings fine the value should be returned
-
-2. which validators it should use
-```python
-from Formf.Core import Field
-from Formf.validators import Min
-
-
-class CustomField(Field):
-    
-    validators = [Min(10)]
-```
-but u can also just write it like with any other field and just define the valid values
-
-```python
-from Formf.Core import Form
-from Formf.Core import Field
-from Formf.Core import ValidationError
-from Formf.validators import MinLength
-
-class CustomField(Field):
-    
-  def to_python(self, value):
-        
-        if value in (None, ""):
-            return None
-        
-        try:
-            return str(value)
-        except Exception:
-            raise ValidationError("type_String", meta={"String": value})
-
-class CustomForm(Form):
-  username = CustomField(validators=MinLength(10))
-
-
-
-```
-
-
-### Shared field options
+## Shared field options
 
 These options are available on all fields:
 
-| Option | Default | Meaning |
-|---|---|---|
-| `strict` | `False` | strict type parsing (when supported by the field) |
-| `required` | `True` | field must be present |
-| `requiredif` | `None` | field becomes required when condition matches |
-| `nullable` | `True` | allow `None` |
-| `blank` | `False` | blank handling for string-like input |
-| `default` | `None` | fallback value if input is missing/`None` |
-| `validators` | `None` | list of additional validator instances |
+| Option       | Default | Meaning                                           |
+| ------------ | ------- | ------------------------------------------------- |
+| `strict`     | `False` | strict type parsing (when supported by the field) |
+| `required`   | `True`  | field must be present                             |
+| `requiredif` | `None`  | field becomes required when condition matches     |
+| `nullable`   | `True`  | allow `None`                                      |
+| `blank`      | `False` | blank handling for string-like input              |
+| `default`    | `None`  | fallback value if input is missing/`None`         |
+| `validators` | `None`  | list of additional validator instances            |
 
-### Field-specific shortcut options
+## Field-specific shortcut options
 
-| Field | Shortcut options |
-|---|---|
-| `String` | `minlength`, `maxlength` |
-| `Integer` | `minvalue`, `maxvalue` |
-| `Float` | `minvalue`, `maxvalue` |
-| `Date` | `dateformat`, `before`, `after` |
-| `Bool` | `value` |
-| `List` | `listvalues`, `must_be_in`, `item_field` |
+| Field     | Shortcut options                         |
+| --------- | ---------------------------------------- |
+| `String`  | `minlength`, `maxlength`                 |
+| `Integer` | `minvalue`, `maxvalue`                   |
+| `Float`   | `minvalue`, `maxvalue`                   |
+| `Date`    | `dateformat`, `before`, `after`          |
+| `Bool`    | `value`                                  |
+| `List`    | `listvalues`, `must_be_in`, `item_field` |
 
-### Strict vs Lenient conversion (`to_python`)
+## Strict vs Lenient conversion (`to_python`)
 
-| Field | Strict mode (`strict=True`) | Lenient mode (`strict=False`) |
-|---|---|---|
-| `String` | only accepts `str` | non-string values are converted with `str(value)` |
-| `Integer` | only accepts `int` | accepts `float` and numeric strings (`"42"`) |
-| `Float` | only accepts `float` | accepts `int` and numeric strings (`"3.14"`) |
-| `Date` | accepts `datetime` or strict `%Y-%m-%d` string | accepts `datetime` or several common string date formats |
-| `List` | only accepts `list` | also accepts `tuple` and `set` (converted to `list`) |
-| `Bool` | accepts bool input only | currently still requires bool input; string/int coercion is limited in current implementation |
+| Field     | Strict mode (`strict=True`)                    | Lenient mode (`strict=False`)                                                                 |
+| --------- | ---------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| `String`  | only accepts `str`                             | non-string values are converted with `str(value)`                                             |
+| `Integer` | only accepts `int`                             | accepts `float` and numeric strings (`"42"`)                                                  |
+| `Float`   | only accepts `float`                           | accepts `int` and numeric strings (`"3.14"`)                                                  |
+| `Date`    | accepts `datetime` or strict `%Y-%m-%d` string | accepts `datetime` or several common string date formats                                      |
+| `List`    | only accepts `list`                            | also accepts `tuple` and `set` (converted to `list`)                                          |
+| `Bool`    | accepts bool input only                        | currently still requires bool input; string/int coercion is limited in current implementation |
 
-## Async validation
-The validation Internal works Asynchronous, so it's not needed to separately call it Asynchronous
+---
 
-## List membership (simplified)
+# Conditional Fields
 
-Use one list plus one mode flag:
+## `requiredif`
 
-```python
-from Formf.fields import List
-
-# all items must be in the provided list
-allowed_tags = List(listvalues=["a", "b", "c"], must_be_in=True)
-
-# all items must NOT be in the provided list
-blocked_tags = List(listvalues=["x", "y"], must_be_in=False)
-```
-
-Legacy args are still accepted for compatibility:
-
-- `inlist=...` (same as `listvalues=..., must_be_in=True`)
-- `notinlist=...` (same as `listvalues=..., must_be_in=False`)
-
-## `requiredif` (extended behavior)
-
-`requiredif` now supports multiple condition styles.
+`requiredif` supports multiple condition styles.
 
 ### 1) Tuple: empty/not-empty or exact value
 
@@ -221,32 +148,261 @@ support_note = String(
 )
 ```
 
-## Validators
+---
 
-### Field validators (`Formf.validators`)
+# Lists
 
-| Group | Validators |
-|---|---|
-| General | `Equals`, `NotEquals`, `InList`, `Choices`, `Pattern`, `Regex` |
-| String | `MinLength`, `MaxLength`, `Lowercase`, `Uppercase`, `Email`, `Url` |
-| Number | `Min`, `Max` |
-| Bool | `Bool` |
-| Date | `Before`, `After`, `Dateformat` |
+## List membership
 
-For membership checks, prefer `InList(values, should_be_in=True/False)`.
+Use one list plus one mode flag:
+
+```python
+from Formf.fields import List
+
+# all items must be in the provided list
+allowed_tags = List(listvalues=["a", "b", "c"], must_be_in=True)
+
+# all items must NOT be in the provided list
+blocked_tags = List(listvalues=["x", "y"], must_be_in=False)
+```
+
+Legacy args are still accepted for compatibility:
+
+* `inlist=...` (same as `listvalues=..., must_be_in=True`)
+* `notinlist=...` (same as `listvalues=..., must_be_in=False`)
+
+---
+
+# Validators
+
+## Field validators (`Formf.validators`)
+
+| Group   | Validators                                                         |
+| ------- | ------------------------------------------------------------------ |
+| General | `Equals`, `NotEquals`, `InList`, `Choices`, `Pattern`, `Regex`     |
+| String  | `MinLength`, `MaxLength`, `Lowercase`, `Uppercase`, `Email`, `Url` |
+| Number  | `Min`, `Max`                                                       |
+| Bool    | `Bool`                                                             |
+| Date    | `Before`, `After`, `Dateformat`                                    |
+
+For membership checks, prefer:
+
+```python
+InList(values, should_be_in=True/False)
+```
+
 `NotInList` remains available as a compatibility wrapper.
 
-### Cross-field validators (`Formf.crossfieldvalidators`)
+## Cross-field validators (`Formf.crossfieldvalidators`)
 
-| Validator | Meaning | Error code |
-|---|---|---|
-| `Equals(field1, field2)` | `field1` must equal `field2` | `Equalsform` |
-| `AfterDate(field1, field2)` | `field1` must be after `field2` | `AfterDateForm` |
+| Validator                    | Meaning                          | Error code       |
+| ---------------------------- | -------------------------------- | ---------------- |
+| `Equals(field1, field2)`     | `field1` must equal `field2`     | `Equalsform`     |
+| `AfterDate(field1, field2)`  | `field1` must be after `field2`  | `AfterDateForm`  |
 | `BeforeDate(field1, field2)` | `field1` must be before `field2` | `BeforeDateForm` |
 
-## Examples
+---
 
-### Basic form
+# Custom Validation
+
+## Custom Fields
+
+To write your own fields, you need to define:
+
+1. when a value is valid and when it is not
+2. which validators the field should use
+
+### 1. Define the value conversion
+
+```python
+from Formf.Core import Field
+from Formf.Core import ValidationError
+
+
+class CustomField(Field):
+
+    def to_python(self, value):
+
+        if value in (None, ""):
+            return None
+
+        try:
+            return str(value)
+        except Exception:
+            raise ValidationError("type_String", meta={"String": value})
+```
+
+When an error occurs, a `ValidationError` should be raised. If everything is valid, the converted value should be returned.
+
+### 2. Define validators
+
+```python
+from Formf.Core import Field
+from Formf.validators import Min
+
+
+class CustomField(Field):
+
+    validators = [Min(10)]
+```
+
+You can also use validators directly when defining a field:
+
+```python
+from Formf.Core import Form
+from Formf.Core import Field
+from Formf.Core import ValidationError
+from Formf.validators import MinLength
+
+
+class CustomField(Field):
+
+    def to_python(self, value):
+
+        if value in (None, ""):
+            return None
+
+        try:
+            return str(value)
+        except Exception:
+            raise ValidationError("type_String", meta={"String": value})
+
+
+class CustomForm(Form):
+    username = CustomField(validators=MinLength(10))
+```
+
+---
+
+## Decorators
+
+Decorators provide a way to append your own custom validators to a specific field.
+
+```python
+from Formf import Form
+from Formf.Core import ValidationError
+from Formf.fields import Integer
+from Formf.decorators import validators
+
+
+class RegisterForm(Form):
+    field1 = Integer()
+
+    @validators("field1")
+    def validator(self, value):
+        if value > 0:
+            return ValidationError(
+                code="greater than",
+                message="Field must be greater than 0",
+                value=value,
+                meta=""
+            )
+
+        return value
+```
+
+The function below `@validators("field1")` is appended to the validators of the specified field.
+
+---
+
+# Validation Errors
+
+## Validation Error Structure
+
+Errors are exposed in a serializable dictionary format.
+
+```python
+{
+    "field_name": [
+        {
+            "code": "validator_name",
+            "meta": {"key": "value"},
+            "value": "value",
+            "message": "message"
+        }
+    ],
+    "__all__": [
+        {
+            "code": "cross_field_error",
+            "meta": {},
+            "value": "value",
+            "message": "message"
+        }
+    ]
+}
+```
+
+`"__all__"` is reserved for form-level (cross-field) errors.
+
+### Individual validation error
+
+```python
+{
+    "code": self.code,       # code is the validator/error code
+    "meta": self.meta,       # expected or additional metadata
+    "value": self.value,     # value given to the validator
+    "message": self.message  # message shown to the user
+}
+```
+
+## Custom error messages
+
+Default messages can be disabled:
+
+```python
+form.errors(default_messages=False)
+```
+
+The default value is `True`.
+
+You can also provide custom messages:
+
+```python
+messages = {
+    "code": "custom message"
+}
+
+print(form.errors(messages=messages))
+```
+
+Messages can also be defined directly in a validator:
+
+```python
+@validator("field")
+def validator(self, value):
+    if something:
+        return ValidationError(
+            code="validatorname",
+            message="your message",
+            value=value
+        )
+    return value
+```
+
+Custom/default messages will be expanded later and will be changeable through n8n.
+
+---
+
+# Internationalization (i18N)
+
+Formf provides a method to change the language of error messages:
+
+```python
+print(form.errors(language="en"))
+```
+
+The default language is English (`"en"`).
+
+Currently supported languages:
+
+* English (`language="en"`)
+* German (`language="de"`)
+
+---
+
+# Examples
+
+## Basic form
 
 ```python
 from Formf import Form
@@ -259,7 +415,7 @@ class UserForm(Form):
     password = Integer(validators=[Min(8)])
 ```
 
-### Cross-field form
+## Cross-field form
 
 ```python
 from Formf import Form
@@ -289,6 +445,7 @@ form = RegisterForm(
 )
 
 form.is_valid()  # False
+
 form.errors
 # {
 #   "__all__": [
@@ -298,103 +455,54 @@ form.errors
 # }
 ```
 
-## Validation Errors
+---
 
-Errors are exposed in a serializable dict format.
+# Schema Export
 
-
-
-```python
-{
-    "field_name": [
-        {
-            "code": "validator_name",
-            "meta": {"key": "value"},
-            "value": "value",
-            "messages": "message"
-        }
-    ],
-    "__all__": [
-        {
-            "code": "cross_field_error",
-            "meta": {},
-            "value": "value",
-            "message": "message"
-        }
-    ]
-}
-```
-
-`"__all__"` is reserved for form-level (cross-field) errors.
-- default messages can now be disabled e.g
-```python
-form.errors(default_messages=False)
-```
-- the default Value is "True"
-- you can also set a message for an error
-```python
-messages = {
-  "code": "custom message"
-}
-
-print(form.errors(messages=messages))
-```
-
-## i18N
-Formf now proviedes a little methode to change the language of the Errormessages
-```
-print(form.errors(language="en"))
-```
-The default language is english("en")
-at the moment following language supports are included:
-
-- English(language="en")
-- German(language="de")
-
-## 
-
-## Schema Export
-
-Formf now provides a frontend-friendly schema export:
+Formf provides a frontend-friendly schema export:
 
 ```python
 schema = MyForm({}).to_schema()
 ```
 
-### Export structure
+## Export structure
 
-| Key | Description |
-|---|---|
-| `form` | Form class name |
-| `version` | Schema version (`"1.0"`) |
-| `fields` | Field map with type/options/validators |
-| `crossfield_validators` | Cross-field validator list |
-| `errors_schema` | Contract for error payloads (`__all__` for form errors) |
+| Key                     | Description                                             |
+| ----------------------- | ------------------------------------------------------- |
+| `form`                  | Form class name                                         |
+| `version`               | Schema version (`"1.0"`)                                |
+| `fields`                | Field map with type/options/validators                  |
+| `crossfield_validators` | Cross-field validator list                              |
+| `errors_schema`         | Contract for error payloads (`__all__` for form errors) |
 
-### Field schema shape
+## Field schema shape
 
 Each field contains:
 
-- `type`
-- `required`
-- `requiredif`
-- `nullable`
-- `blank`
-- `default`
-- `validators` (`[{name, params}]`)
+* `type`
+* `required`
+* `requiredif`
+* `nullable`
+* `blank`
+* `default`
+* `validators` (`[{name, params}]`)
 
-### `requiredif` export notes
+## `requiredif` export notes
 
-- Tuple condition exports as:
-  - `{"type": "tuple", "field": "...", "expected": ...}`
-- Dict condition exports as:
-  - `{"type": "rule", "rule": {...}}`
-- List condition exports as:
-  - `{"type": "any", "conditions": [...]}`
-- Callable condition exports as:
-  - `{"type": "callable", "exportable": false, "name": "..."}`
+* Tuple condition exports as:
 
-### Example output
+  * `{"type": "tuple", "field": "...", "expected": ...}`
+* Dict condition exports as:
+
+  * `{"type": "rule", "rule": {...}}`
+* List condition exports as:
+
+  * `{"type": "any", "conditions": [...]}`
+* Callable condition exports as:
+
+  * `{"type": "callable", "exportable": false, "name": "..."}`
+
+## Example output
 
 ```python
 {
@@ -408,20 +516,38 @@ Each field contains:
       "nullable": True,
       "blank": False,
       "default": None,
-      "validators": [{"name": "MinLength", "params": {"length": 8}}]
+      "validators": [
+        {
+          "name": "MinLength",
+          "params": {
+            "length": 8
+          }
+        }
+      ]
     }
   },
   "crossfield_validators": [
-    {"name": "Equals", "params": {"field1": "password", "field2": "password_repeat"}}
+    {
+      "name": "Equals",
+      "params": {
+        "field1": "password",
+        "field2": "password_repeat"
+      }
+    }
   ],
   "errors_schema": {
-    "field_error_shape": {"code": "string", "message": "string|null", "meta": "object"},
+    "field_error_shape": {
+      "code": "string",
+      "message": "string|null",
+      "meta": "object"
+    },
     "form_error_key": "__all__"
   }
 }
 ```
 
-## Contributing
+---
+
+# Contributing
 
 Pull requests, ideas, and feedback are welcome.
-

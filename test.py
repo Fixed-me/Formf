@@ -1,24 +1,21 @@
 from Formf import Form, Field
 from Formf.Core import ValidationError
-from Formf.validators import Min
+from Formf.fields import Integer
+from Formf.decorators import validators
 
 data = {
     "field2": 9
 }
 
-class Integer(Field):
-
-    def to_python(self, value):
-        if value in (None, ""):
-            return None
-
-        if not type(value) is int:
-            raise ValidationError("type_integer", meta={"integer": value})
-
-        return value
-
 class Registerform(Form):
     field2 = Integer()
+
+    @validators("field2")
+    def validator(self, value):
+        if value > 0:
+            return ValidationError(code="greater than", message="Field must be greater than 0", value=value)
+
+        return value
 
 form = Registerform(data)
 

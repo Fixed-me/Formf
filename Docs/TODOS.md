@@ -14,8 +14,6 @@
 
 * ~~Pluggable Field System~~
 
-* Field Dependencies Graph
-
 * immutable Cleaned data
 
 * Script Typing Support(PEP 484)

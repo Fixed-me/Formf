@@ -95,12 +95,9 @@ class Form(metaclass=FormMeta):
         with open(path, encoding="utf-8") as msg:
             template = json.load(msg)
 
-        if code in template:
-            data = template[code]
+        data = template[code]
 
-            return data
-
-        return None
+        return data
 
     def errors(self, default_messages=True, language="en", messages=None):
 
@@ -116,12 +113,13 @@ class Form(metaclass=FormMeta):
                 err_dict = err.to_dict()
 
                 if err.code in messages:
-                    default_messages = False
                     err_dict["message"] = messages[err.code]
 
-                if default_messages:
-                    err_dict["message"] = self.resolve_messages(err.code, language)
+                elif err.message is not None:
+                    err_dict["message"] = err.message
 
+                elif default_messages:
+                    err_dict["message"] = self.resolve_messages(err.code, language)
                 result[field_name].append(err_dict)
 
         return result
