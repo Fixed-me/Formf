@@ -1,6 +1,7 @@
 # form.py
 from Formf.Core.Field import Field
 from Formf.Core.schema import Schema
+from Formf.decorators.validators import ValidatorDefinition
 import asyncio
 import json
 import os
@@ -24,6 +25,7 @@ class FormMeta(type):
 
 
 class Form(metaclass=FormMeta):
+
     def __init__(self, data):
         # raw Input (like from the Form, or a request)
         self.data = data
@@ -33,6 +35,20 @@ class Form(metaclass=FormMeta):
 
         # save all validated data
         self.cleaned_data = {}
+
+        self._validators = list(
+            self.__class__._validators
+        )
+
+    def __init_subclass__(cls):
+        super().__init_subclass__()
+
+        cls._validators = []
+
+        for name, value in cls.__dict__.items():
+
+            if isinstance(value, ValidatorDefinition):
+                cls._validators.append(value)
 
     async def is_valid_async(self):
         tasks = []
@@ -55,6 +71,7 @@ class Form(metaclass=FormMeta):
         # the Form is only valid if no error occurred
         if not self._errors:
             self._run_crossfield_validators()
+            self._run_decorator_validators()
 
         return not self._errors
 
@@ -78,9 +95,12 @@ class Form(metaclass=FormMeta):
         with open(path, encoding="utf-8") as msg:
             template = json.load(msg)
 
-        data = template[code]
+        if code in template:
+            data = template[code]
 
-        return data
+            return data
+
+        return None
 
     def errors(self, default_messages=True, language="en", messages=None):
 
@@ -106,11 +126,22 @@ class Form(metaclass=FormMeta):
 
         return result
 
+    def _run_decorator_validators(self):
+        for validator in self._validators:
+            value = self.cleaned_data.get(validator.field_name)
+
+            error = validator.function(self, value)
+
+            if error is not None:
+                self._errors.setdefault(validator.field_name, []).append(error)
+
     def _run_crossfield_validators(self):
         for validator in getattr(self, "crossfield_validators", []):
             error = validator(self)
+
             if error is not None:
                 self._errors.setdefault("__all__", []).append(error)
+
 
     def to_schema(self):
         return {
