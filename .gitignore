@@ -1,6 +1,6 @@
 #Mac
-.DS_files
-.DS_Store
+**/.DS_files
+**/.DS_Store
 
 # PyCharm
 *.iml
