@@ -234,6 +234,7 @@ class CustomField(Field):
 
 When an error occurs, a `ValidationError` should be raised. If everything is valid, the converted value should be returned.
 
+
 ### 2. Define validators
 
 ```python
@@ -274,7 +275,7 @@ class CustomForm(Form):
 
 ---
 
-## Decorators
+## Decorators (create your own validators)
 
 Decorators provide a way to append your own custom validators to a specific field.
 
@@ -301,7 +302,10 @@ class RegisterForm(Form):
         return value
 ```
 
-The function below `@validators("field1")` is appended to the validators of the specified field.
+The function below `@validators("field1")` is appended to the "field1"
+
+here you always need to return an ValidationError or None. 
+Except if you define it through "form.errors(default_messages=False)"
 
 ---
 
@@ -383,7 +387,7 @@ Custom/default messages will be expanded later and will be changeable through n8
 
 ---
 
-# Internationalization (i18N)
+# i18N
 
 Formf provides a method to change the language of error messages:
 

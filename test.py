@@ -1,4 +1,4 @@
-from Formf import Form, Field
+from Formf import Form
 from Formf.Core import ValidationError
 from Formf.fields import Integer
 from Formf.decorators import validators
